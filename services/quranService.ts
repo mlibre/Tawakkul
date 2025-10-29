@@ -10,7 +10,7 @@ export async function initQuranData(): Promise<void> {
     return;
   }
   try {
-    const response = await fetch('/quran.json');
+    const response = await fetch('quran.json');
     if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -32,7 +32,8 @@ export function getPage(pageNumber: number): PageData | null {
     return null;
   }
 
-  const pageMeta = getPageMeta(pageNumber);
+  // Cast to any to bypass type mismatch with the external library
+  const pageMeta = getPageMeta(pageNumber as any) as any;
 
   const verses = quranData.filter((verse: Verse) => {
     return verse.id >= pageMeta.firstAyahId && verse.id <= pageMeta.lastAyahId;
