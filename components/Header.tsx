@@ -14,9 +14,6 @@ interface HeaderProps {
 
 const translations: { key: TranslationKey; label: string }[] = [
   { key: 'farsi_makarem', label: 'مکارم' },
-  { key: 'farsi_ansarian', label: 'انصاریان' },
-  { key: 'farsi_fooladvand', label: 'فولادوند' },
-  { key: 'farsi_mojtabavi', label: 'مجتبوی' },
 ];
 
 export const Header: React.FC<HeaderProps> = ({ currentPage, totalPages, translation, setTranslation, theme, setTheme }) => {

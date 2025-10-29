@@ -1,4 +1,4 @@
-# BayanBook - One Page a Day - Quran Reading App
+# Tawakkul - One Page a Day - Quran Reading App
 
 ## Overview
 
