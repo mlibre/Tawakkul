@@ -15,22 +15,6 @@ A web application for daily Quran reading. The app follows the "one page a day" 
 - ⚡ Fast, responsive design with glass-morphism
 - 🌙 Calm, fantasy-themed gradient UI (blue → purple → pink)
 
-## Configuration
-
-### Workflow
-
-- **Name**: App
-- **Command**: `bash -c "node server/index.js & cd client && npm run dev"`
-- **Ports**:
-  - Frontend: 5000 (webview)
-  - Backend API: 3000 (localhost only)
-
-### API Endpoints
-
-- `GET /api/quran` - Full Quran data with all translations
-- `GET /api/page/:pageNumber` - Get verses for specific page (1-604)
-- `GET /api/search?q=query` - Search verses (basic implementation)
-
 ## Pending Features
 
 - 📚 Tafsir Nemooneh integration (from official website via src/utils/interpretations.js)
@@ -39,13 +23,3 @@ A web application for daily Quran reading. The app follows the "one page a day" 
 - 🔍 Advanced fuzzy search with Fuse.js
 - 📱 PWA manifest and service worker
 - 🔔 Daily reading reminders
-
-## Notes
-
-- UI features calm gradient background with fantasy theme
-- Glass-morphism cards for modern, elegant look
-- RTL support for Arabic and Persian text
-- Accurate page mapping using quran-meta library
-- Browser storage for offline-capable progress tracking
-- Reuses original Quran data (sources/quran.json)
-- Legacy Telegram bot utilities available for future interpretation features
