@@ -4,25 +4,6 @@
 
 A web application for daily Quran reading. The app follows the "one page a day" concept, allowing users to read one page of the Quran each day with multiple Persian translations and track their progress.
 
-## Directory Structure
-
-```
-/
-├── client/               # React frontend (Vite)
-│   ├── src/
-│   │   ├── App.jsx      # Main app component
-│   │   ├── index.css    # Styling with gradients and glass-morphism
-│   │   └── main.jsx     # Entry point
-│   ├── vite.config.js   # Vite config (proxy to API, host 0.0.0.0)
-│   └── package.json
-├── server/
-│   └── index.js         # Express API server (quran-meta integration)
-├── sources/             # Original Quran JSON data
-│   └── quran.json       # Complete Quran with translations
-└── src/                 # Legacy Telegram bot utils (for future features)
-    └── utils/           # Interpretations, web scraping utilities
-```
-
 ## Key Features
 
 - 📖 One page a day reading experience (accurate Mushaf pages)
