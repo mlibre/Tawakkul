@@ -12,6 +12,7 @@ export const VerseActions: React.FC<VerseActionsProps> = ({ verse }) => {
 
   const khameneiUrl = `https://farsi.khamenei.ir/newspart-index?sid=${surahNumber}&npt=7&aya=${ayahNumber}`;
   const tafsirNoorUrl = `https://quran.makarem.ir/fa/interpretation?sura=${surahNumber}&verse=${ayahNumber}`;
+  const alMizanUrl = `https://quran.inoor.ir/fa/ayah/${surahNumber}/${ayahNumber}/commentary?book=121`;
   const shaanNozulUrl = `https://wiki.ahlolbait.com/آیه_${ayahNumber}_سوره_${surahTitlePersian}`;
 
   return (
@@ -22,6 +23,10 @@ export const VerseActions: React.FC<VerseActionsProps> = ({ verse }) => {
       <span className="text-slate-300 dark:text-slate-600">|</span>
       <a href={tafsirNoorUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-slate-500 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
         تفسیر نمونه
+      </a>
+      <span className="text-slate-300 dark:text-slate-600">|</span>
+      <a href={alMizanUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-slate-500 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
+        تفسیر المیزان
       </a>
       <span className="text-slate-300 dark:text-slate-600">|</span>
       <a href={shaanNozulUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-slate-500 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
