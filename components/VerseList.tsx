@@ -1,6 +1,7 @@
 
 import React from 'react';
 import type { Verse, TranslationKey } from '../types';
+import { VerseActions } from './VerseActions';
 
 interface VerseListProps {
   verses: Verse[];
@@ -25,6 +26,7 @@ export const VerseList: React.FC<VerseListProps> = ({ verses, translationKey }) 
             <div className="text-xs text-slate-400 dark:text-slate-500 mt-2 text-right">
               سوره {verse.surah.farsi} - آیه {verse.ayah_persian}
             </div>
+            <VerseActions verse={verse} />
           </div>
         ))}
       </div>
