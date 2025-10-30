@@ -14,6 +14,7 @@ interface HeaderProps {
 
 const translations: { key: TranslationKey; label: string }[] = [
   { key: 'farsi_makarem', label: 'مکارم' },
+  { key: 'english_arberry', label: 'Arberry' },
 ];
 
 export const Header: React.FC<HeaderProps> = ({ currentPage, totalPages, translation, setTranslation, theme, setTheme }) => {
