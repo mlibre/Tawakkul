@@ -84,19 +84,19 @@ function App(): React.ReactElement {
                     <p>درحال بارگذاری صفحه...</p>
                 </div>
               )}
-              <Pagination
-                currentPage={currentPage}
-                totalPages={TOTAL_PAGES}
-                onPageChange={handlePageChange}
-                isPageRead={readPagesSet.has(currentPage)}
-                onToggleRead={togglePageRead}
-              />
             </main>
           </div>
-          <div className="w-20">
+          <div className="w-20 flex flex-col gap-6">
             <ProgressBar
               readCount={readPages.length}
               totalCount={TOTAL_PAGES}
+            />
+            <Pagination
+              currentPage={currentPage}
+              totalPages={TOTAL_PAGES}
+              onPageChange={handlePageChange}
+              isPageRead={readPagesSet.has(currentPage)}
+              onToggleRead={togglePageRead}
             />
           </div>
         </div>

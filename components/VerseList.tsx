@@ -14,7 +14,7 @@ export const VerseList: React.FC<VerseListProps> = ({ verses, translationKey }) 
       <div className="space-y-6">
         {verses.map((verse) => (
           <div key={verse.id} className="pb-4 pt-2 border-b border-slate-200 dark:border-slate-700 last:border-b-0">
-            <p className="font-arabic text-2xl sm:text-3xl text-slate-900 dark:text-slate-100 text-right mb-4" style={{ fontSize: '2.1rem', lineHeight: 'inherit' }}>
+            <p className="font-arabic text-2xl sm:text-3xl text-slate-900 dark:text-slate-100 text-right mb-4" style={{ fontSize: '2.1rem', lineHeight: '3.8rem' }}>
               {verse.verse.arabic_enhanced}
               <span className="text-lg font-persian text-purple-600 dark:text-purple-400 mx-2">
                 ({verse.ayah_persian})
