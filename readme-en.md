@@ -93,9 +93,12 @@ tawakkul/
 The application uses various sources for Quran text and translations:
 
 - **Quran Text**: Arabic text with enhanced styling
-- **Persian Translations**: Makarem Shirazi translation
-- **English Translation**: A.J. Arberry translation
-- **External Resources**: Links to Tafsir Nemooneh, Khamenei insights, and revelation context
+- **Persian Translations**: [Makarem Shirazi translation](https://quran.makarem.ir)
+- **English Translation**: [A.J. Arberry translation](https://api.globalquran.com/complete/en.arberry.json)
+- **External Resources**:
+  - [Tafsir Nemooneh](https://quran.makarem.ir/fa/interpretation)
+  - [Khamenei insights](https://farsi.khamenei.ir)
+  - [Revelation context](https://wiki.ahlolbait.com)
 
 ## License
 
