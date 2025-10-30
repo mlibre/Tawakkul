@@ -1,6 +1,12 @@
 import { AI_API_URL, DEFAULT_AI_PROMPT } from '../config';
 
-export async function getAIInterpretation(verseText: string, customPrompt?: string, khameneiText?: string, almizanText?: string): Promise<string> {
+export async function getAIInterpretation(
+  verseText: string,
+  customPrompt?: string,
+  khameneiText?: string,
+  almizanText?: string,
+  onChunk?: (chunk: string) => void
+): Promise<string> {
   const prompt = customPrompt || DEFAULT_AI_PROMPT;
 
   // Build the content with verse and optional texts
@@ -41,7 +47,7 @@ ${prompt}
             content: content
           }
         ],
-        temperature: 0.7,
+        temperature: 0.3,
         stream: true
       })
     });
@@ -76,6 +82,7 @@ ${prompt}
             const content = parsed.choices?.[0]?.delta?.content;
             if (content) {
               result += content;
+              onChunk?.(result);
             }
           } catch (e) {
             // Ignore parsing errors for incomplete chunks

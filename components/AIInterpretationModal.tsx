@@ -39,15 +39,39 @@ export const AIInterpretationModal: React.FC<AIInterpretationModalProps> = ({
   const handleRequestInterpretation = () => {
     setIsLoading(true);
     setHasRequested(true);
-    getAIInterpretation(verseText, customPrompt, khameneiText || undefined, almizanText || undefined)
-      .then(setInterpretation)
+    setInterpretation('');
+
+    getAIInterpretation(
+      verseText,
+      customPrompt,
+      khameneiText || undefined,
+      almizanText || undefined,
+      (chunk) => setInterpretation(chunk)
+    )
+      .then(() => {})
+      .catch((error) => {
+        console.error('Error fetching AI interpretation:', error);
+        setInterpretation('خطا در دریافت تفسیر هوش مصنوعی');
+      })
       .finally(() => setIsLoading(false));
   };
 
   const handleRegenerate = () => {
     setIsLoading(true);
-    getAIInterpretation(verseText, customPrompt, khameneiText || undefined, almizanText || undefined)
-      .then(setInterpretation)
+    setInterpretation('');
+
+    getAIInterpretation(
+      verseText,
+      customPrompt,
+      khameneiText || undefined,
+      almizanText || undefined,
+      (chunk) => setInterpretation(chunk)
+    )
+      .then(() => {})
+      .catch((error) => {
+        console.error('Error fetching AI interpretation:', error);
+        setInterpretation('خطا در دریافت تفسیر هوش مصنوعی');
+      })
       .finally(() => setIsLoading(false));
   };
 
@@ -185,28 +209,32 @@ export const AIInterpretationModal: React.FC<AIInterpretationModalProps> = ({
                   <button
                     onClick={handleRegenerate}
                     disabled={isLoading}
-                    className="text-xs text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 underline disabled:opacity-50"
+                    className={`text-xs text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 underline disabled:opacity-50 ${isLoading ? 'cursor-not-allowed' : ''}`}
                   >
-                    تولید مجدد
+                    {isLoading ? 'در حال تولید...' : 'تولید مجدد'}
                   </button>
                 )}
               </div>
             </div>
 
             <div className="bg-gradient-to-r from-sky-50 to-purple-50 dark:from-slate-700 dark:to-slate-600 p-6 rounded-lg border border-slate-200 dark:border-slate-600 min-h-[200px]">
-              {isLoading && interpretation === '' ? (
-                <div className="flex flex-col items-center justify-center h-full">
-                  <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-purple-600 mb-4"></div>
-                  <p className="text-slate-600 dark:text-slate-400 text-sm">در حال دریافت تفسیر...</p>
-                </div>
-              ) : (
-                <div className="text-right text-slate-800 dark:text-slate-200 leading-loose prose prose-sm dark:prose-invert max-w-none">
-                  <ReactMarkdown>{interpretation || (hasRequested ? 'در حال دریافت تفسیر...' : 'برای دریافت تفسیر هوش مصنوعی، ابتدا متن‌های مورد نیاز را وارد کرده و سپس روی دکمه "دریافت تفسیر" کلیک کنید.')}</ReactMarkdown>
-                  {isLoading && (
-                    <span className="inline-block w-2 h-4 bg-purple-600 animate-pulse ml-1"></span>
-                  )}
-                </div>
-              )}
+              <div className="text-right text-slate-800 dark:text-slate-200 leading-loose prose prose-sm dark:prose-invert max-w-none">
+                {interpretation ? (
+                  <ReactMarkdown>{interpretation}</ReactMarkdown>
+                ) : hasRequested ? (
+                  <div className="flex flex-col items-center justify-center h-full">
+                    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-purple-600 mb-4"></div>
+                    <p className="text-slate-600 dark:text-slate-400 text-sm">در حال دریافت تفسیر...</p>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center h-full">
+                    <p className="text-slate-600 dark:text-slate-400 text-sm">برای دریافت تفسیر هوش مصنوعی، ابتدا متن‌های مورد نیاز را وارد کرده و سپس روی دکمه "دریافت تفسیر" کلیک کنید.</p>
+                  </div>
+                )}
+                {interpretation && isLoading && (
+                  <span className="inline-block w-2 h-4 bg-purple-600 animate-pulse ml-1"></span>
+                )}
+              </div>
             </div>
           </div>
         </div>
