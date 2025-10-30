@@ -16,8 +16,9 @@ import { BASENAME } from './config';
 const TOTAL_PAGES = 604;
 
 function App(): React.ReactElement {
-  const { pageNumber } = useParams<{ pageNumber: string }>();
   const navigate = useNavigate();
+  const urlParams = new URLSearchParams(window.location.search);
+  const pageNumber = urlParams.get('page');
   const [theme, setTheme] = useTheme();
   const [isDataLoading, setIsDataLoading] = useState(true);
   const [pageData, setPageData] = useState<PageData | null>(null);
@@ -50,10 +51,10 @@ function App(): React.ReactElement {
       if (page >= 1 && page <= TOTAL_PAGES) {
         setCurrentPage(page);
       } else {
-        navigate('/page/1');
+        navigate('?page=1');
       }
     } else if (window.location.pathname === `${BASENAME}/` || window.location.pathname === BASENAME) {
-      navigate(`/page/${currentPage}`);
+      navigate(`?page=${currentPage}`);
     }
   }, [pageNumber, navigate, setCurrentPage]);
 
@@ -67,7 +68,7 @@ function App(): React.ReactElement {
   const handlePageChange = useCallback((newPage: number) => {
     if (newPage >= 1 && newPage <= TOTAL_PAGES) {
       setCurrentPage(newPage);
-      navigate(`/page/${newPage}`);
+      navigate(`?page=${newPage}`);
     }
   }, [setCurrentPage, navigate]);
 
