@@ -2,8 +2,7 @@
 import { getPageMeta } from 'quran-meta';
 import type { QuranData, PageData, Verse } from '../types';
 
-// Cache duration: 7 days (a week)
-const CACHE_DURATION_MS = 7 * 24 * 60 * 1000;
+const CACHE_DURATION_MS = 60 * 24 * 60 * 1000;
 
 let quranData: QuranData | null = null;
 const TOTAL_PAGES = 604;
