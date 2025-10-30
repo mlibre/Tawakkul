@@ -11,6 +11,7 @@ import { ProgressBar } from './components/ProgressBar';
 import { LoadingSpinner } from './components/LoadingSpinner';
 import { SourcesModal } from './components/SourcesModal';
 import type { PageData, TranslationKey } from './types';
+import { BASENAME } from './config';
 
 const TOTAL_PAGES = 604;
 
@@ -51,7 +52,7 @@ function App(): React.ReactElement {
       } else {
         navigate('/page/1');
       }
-    } else if (window.location.pathname === '/Tawakkul/' || window.location.pathname === '/Tawakkul') {
+    } else if (window.location.pathname === `${BASENAME}/` || window.location.pathname === BASENAME) {
       navigate(`/page/${currentPage}`);
     }
   }, [pageNumber, navigate, setCurrentPage]);
