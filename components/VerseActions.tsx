@@ -51,6 +51,8 @@ export const VerseActions: React.FC<VerseActionsProps> = ({ verse }) => {
         isOpen={isAIModalOpen}
         onClose={() => setIsAIModalOpen(false)}
         verseText={verse.verse.arabic_enhanced}
+        surahNumber={surahNumber}
+        ayahNumber={ayahNumber}
       />
     </>
   );

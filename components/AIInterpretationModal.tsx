@@ -8,12 +8,16 @@ interface AIInterpretationModalProps {
   isOpen: boolean;
   onClose: () => void;
   verseText: string;
+  surahNumber?: number;
+  ayahNumber?: number;
 }
 
 export const AIInterpretationModal: React.FC<AIInterpretationModalProps> = ({
   isOpen,
   onClose,
-  verseText
+  verseText,
+  surahNumber,
+  ayahNumber
 }) => {
   const [interpretation, setInterpretation] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
@@ -80,7 +84,7 @@ export const AIInterpretationModal: React.FC<AIInterpretationModalProps> = ({
           <div className="mb-6">
             <h3 className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-3">
               محتوی فیش ها رهبری (اختیاری) <a
-                href="https://farsi.khamenei.ir/newspart-index?sid=1&npt=7&aya=1"
+                href={`https://farsi.khamenei.ir/newspart-index?sid=${surahNumber || 1}&npt=7&aya=${ayahNumber || 1}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 underline ml-2"
@@ -100,7 +104,7 @@ export const AIInterpretationModal: React.FC<AIInterpretationModalProps> = ({
           <div className="mb-6">
             <h3 className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-3">
               محتوی ترجمه تفسیر المزیان (اختیاری) <a
-                href="https://quran.inoor.ir/fa/ayah/1/1/commentary?book=121"
+                href={`https://quran.inoor.ir/fa/ayah/${surahNumber || 1}/${ayahNumber || 1}/commentary?book=121`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 underline ml-2"
