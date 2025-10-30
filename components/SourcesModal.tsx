@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactMarkdown from 'react-markdown';
 
 interface SourcesModalProps {
   isOpen: boolean;
@@ -28,12 +29,14 @@ const SourcesModal: React.FC<SourcesModalProps> = ({ isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={handleOverlayClick}>
-      <div className="bg-white dark:bg-slate-800 p-6 rounded-lg max-w-2xl w-full mx-4 max-h-96 overflow-y-auto">
-        <h2 className="text-xl font-bold mb-4 text-slate-800 dark:text-slate-200">منابع</h2>
-        <pre className="text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{sourcesContent}</pre>
+      <div className="bg-white dark:bg-slate-800 p-8 rounded-lg max-w-4xl w-full mx-4 max-h-[80vh] overflow-y-auto">
+        <h2 className="text-xl font-bold mb-6 text-slate-800 dark:text-slate-200">منابع</h2>
+        <div className="text-sm text-slate-700 dark:text-slate-300 prose prose-sm dark:prose-invert max-w-none">
+          <ReactMarkdown>{sourcesContent}</ReactMarkdown>
+        </div>
         <button
           onClick={onClose}
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          className="mt-6 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
           بستن
         </button>
