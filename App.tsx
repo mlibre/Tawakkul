@@ -8,6 +8,7 @@ import { VerseList } from './components/VerseList';
 import { Pagination } from './components/Pagination';
 import { ProgressBar } from './components/ProgressBar';
 import { LoadingSpinner } from './components/LoadingSpinner';
+import { SourcesModal } from './components/SourcesModal';
 import type { PageData, TranslationKey } from './types';
 
 const TOTAL_PAGES = 604;
@@ -16,7 +17,8 @@ function App(): React.ReactElement {
   const [theme, setTheme] = useTheme();
   const [isDataLoading, setIsDataLoading] = useState(true);
   const [pageData, setPageData] = useState<PageData | null>(null);
-  
+  const [isSourcesModalOpen, setIsSourcesModalOpen] = useState(false);
+
   const [currentPage, setCurrentPage] = useLocalStorage<number>('currentPage', 1);
   const [translation, setTranslation] = useLocalStorage<TranslationKey>('translation', 'farsi_makarem');
   const [readPages, setReadPages] = useLocalStorage<number[]>('readPages', []);
@@ -112,6 +114,21 @@ function App(): React.ReactElement {
             />
           </div>
         </div>
+        <footer className="mt-8 text-center">
+          <div className="flex justify-center items-center gap-4">
+            <button
+              onClick={() => setIsSourcesModalOpen(true)}
+              className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 underline"
+            >
+              منابع
+            </button>
+            <span className="text-slate-400 dark:text-slate-600">|</span>
+            <div className="text-xs text-slate-500 dark:text-slate-500">
+              ارتباط: <a href="mailto:m.gh@linuxmail.org" className="hover:text-slate-700 dark:hover:text-slate-300">m.gh@linuxmail.org</a>
+            </div>
+          </div>
+        </footer>
+        <SourcesModal isOpen={isSourcesModalOpen} onClose={() => setIsSourcesModalOpen(false)} />
       </div>
     </div>
   );

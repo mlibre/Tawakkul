@@ -1,0 +1,45 @@
+import React from 'react';
+
+interface SourcesModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const sourcesContent = `* ترجمه ی مکارم شیراری - https://quran.makarem.ir
+* ترجمه اربری - en.arberry: https://api.globalquran.com/complete/en.arberry.json
+* متن عربی ساده - ar-simple-clean: https://api.globalquran.com/complete/ar-simple-clean.json
+* متن عربی با عراب - ar-simple-enhanced: https://api.globalquran.com/complete/ar-simple-enhanced.json
+
+* نام سوره ها به انگلیسی - surahs_names.json: https://en.wikipedia.org/wiki/List_of_chapters_in_the_Quran
+* نام سوره ها به فارسی - surahs_names.json: https://fa.wikipedia.org/wiki/%D9%81%D9%87%D8%B1%D8%B3%D8%AA_%D8%B3%D9%88%D8%B1%D9%87%E2%80%8C%D9%87%D8%A7%DB%8C_%D9%82%D8%B1%D8%A2%D9%86
+
+* تفسیر نمونه - https://quran.makarem.ir/fa/interpretation
+* شان نزول - https://wiki.ahlolbait.com
+* فیش های رهبری - https://farsi.khamenei.ir`;
+
+const SourcesModal: React.FC<SourcesModalProps> = ({ isOpen, onClose }) => {
+  if (!isOpen) return null;
+
+  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={handleOverlayClick}>
+      <div className="bg-white dark:bg-slate-800 p-6 rounded-lg max-w-2xl w-full mx-4 max-h-96 overflow-y-auto">
+        <h2 className="text-xl font-bold mb-4 text-slate-800 dark:text-slate-200">منابع</h2>
+        <pre className="text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{sourcesContent}</pre>
+        <button
+          onClick={onClose}
+          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          بستن
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export { SourcesModal };
