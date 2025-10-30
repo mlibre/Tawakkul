@@ -80,7 +80,7 @@ export const AIInterpretationModal: React.FC<AIInterpretationModalProps> = ({
 
   const modalContent = (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}>
-      <div className="bg-white dark:bg-slate-800 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl">
+      <div className="bg-white dark:bg-slate-800 rounded-lg max-w-6xl w-full max-h-[95vh] overflow-hidden shadow-2xl">
         <div className="flex justify-between items-center p-6 border-b border-slate-200 dark:border-slate-700">
           <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-200">
             تفسیر هوش مصنوعی
