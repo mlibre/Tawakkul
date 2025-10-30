@@ -20,8 +20,10 @@ function App(): React.ReactElement {
   const [currentPage, setCurrentPage] = useLocalStorage<number>('currentPage', 1);
   const [translation, setTranslation] = useLocalStorage<TranslationKey>('translation', 'farsi_makarem');
   const [readPages, setReadPages] = useLocalStorage<number[]>('readPages', []);
+  const [readAyahs, setReadAyahs] = useLocalStorage<number[]>('readAyahs', []);
 
   const readPagesSet = React.useMemo(() => new Set(readPages), [readPages]);
+  const readAyahsSet = React.useMemo(() => new Set(readAyahs), [readAyahs]);
 
   useEffect(() => {
     async function loadInitialData() {
@@ -59,6 +61,16 @@ function App(): React.ReactElement {
     setReadPages(Array.from(newReadPages));
   }, [currentPage, readPagesSet, setReadPages]);
 
+  const toggleAyahRead = useCallback((ayahId: number) => {
+    const newReadAyahs = new Set(readAyahsSet);
+    if (newReadAyahs.has(ayahId)) {
+      newReadAyahs.delete(ayahId);
+    } else {
+      newReadAyahs.add(ayahId);
+    }
+    setReadAyahs(Array.from(newReadAyahs));
+  }, [readAyahsSet, setReadAyahs]);
+
   if (isDataLoading) {
     return <LoadingSpinner />;
   }
@@ -78,7 +90,7 @@ function App(): React.ReactElement {
             />
             <main>
               {pageData ? (
-                <VerseList verses={pageData.verses} translationKey={translation} />
+                <VerseList verses={pageData.verses} translationKey={translation} readAyahs={readAyahsSet} onToggleAyahRead={toggleAyahRead} />
               ) : (
                 <div className="flex justify-center items-center h-96">
                     <p>درحال بارگذاری صفحه...</p>

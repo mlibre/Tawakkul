@@ -6,9 +6,11 @@ import { VerseActions } from './VerseActions';
 interface VerseListProps {
   verses: Verse[];
   translationKey: TranslationKey;
+  readAyahs: Set<number>;
+  onToggleAyahRead: (ayahId: number) => void;
 }
 
-export const VerseList: React.FC<VerseListProps> = ({ verses, translationKey }) => {
+export const VerseList: React.FC<VerseListProps> = ({ verses, translationKey, readAyahs, onToggleAyahRead }) => {
   return (
     <div className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-lg rounded-2xl shadow-lg p-4 sm:p-8 mb-6 border border-white/30 dark:border-slate-700/50">
       <div className="space-y-6">
@@ -27,7 +29,21 @@ export const VerseList: React.FC<VerseListProps> = ({ verses, translationKey }) 
               <div className="text-xs text-slate-400 dark:text-slate-500 text-right">
                 سوره {verse.surah.farsi} - آیه {verse.ayah_persian}
               </div>
-              <VerseActions verse={verse} />
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => onToggleAyahRead(verse.id)}
+                  className={`rounded-full transition-all duration-300 transform hover:scale-110
+                    ${readAyahs.has(verse.id)
+                      ? 'text-green-600 dark:text-green-400'
+                      : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300'
+                    }`}
+                  title={readAyahs.has(verse.id) ? 'خوانده شده' : 'خوانده نشده'}
+                >
+                  {readAyahs.has(verse.id) ? '✓' : '○'}
+                </button>
+                <span className="text-slate-300 dark:text-slate-600">|</span>
+                <VerseActions verse={verse} />
+              </div>
             </div>
           </div>
         ))}
