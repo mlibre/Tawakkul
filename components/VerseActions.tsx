@@ -15,7 +15,7 @@ export const VerseActions: React.FC<VerseActionsProps> = ({ verse }) => {
   const shaanNozulUrl = `https://wiki.ahlolbait.com/آیه_${ayahNumber}_سوره_${surahTitlePersian}`;
 
   return (
-    <div className="flex justify-end gap-2 mt-4">
+    <div className="flex justify-end gap-2">
       <a href={khameneiUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-slate-500 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
         فیش رهبری
       </a>
