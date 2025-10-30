@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
 import { getPage, initQuranData } from './services/quranService';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { useTheme } from './hooks/useTheme';
@@ -11,14 +10,10 @@ import { ProgressBar } from './components/ProgressBar';
 import { LoadingSpinner } from './components/LoadingSpinner';
 import { SourcesModal } from './components/SourcesModal';
 import type { PageData, TranslationKey } from './types';
-import { BASENAME } from './config';
 
 const TOTAL_PAGES = 604;
 
 function App(): React.ReactElement {
-  const navigate = useNavigate();
-  const urlParams = new URLSearchParams(window.location.search);
-  const pageNumber = urlParams.get('page');
   const [theme, setTheme] = useTheme();
   const [isDataLoading, setIsDataLoading] = useState(true);
   const [pageData, setPageData] = useState<PageData | null>(null);
@@ -45,18 +40,6 @@ function App(): React.ReactElement {
     loadInitialData();
   }, []);
 
-  useEffect(() => {
-    if (pageNumber) {
-      const page = parseInt(pageNumber, 10);
-      if (page >= 1 && page <= TOTAL_PAGES) {
-        setCurrentPage(page);
-      } else {
-        navigate('?page=1');
-      }
-    } else if (window.location.pathname === `${BASENAME}/` || window.location.pathname === BASENAME) {
-      navigate(`?page=${currentPage}`);
-    }
-  }, [pageNumber, navigate, setCurrentPage]);
 
   useEffect(() => {
     if (!isDataLoading) {
@@ -68,9 +51,8 @@ function App(): React.ReactElement {
   const handlePageChange = useCallback((newPage: number) => {
     if (newPage >= 1 && newPage <= TOTAL_PAGES) {
       setCurrentPage(newPage);
-      navigate(`?page=${newPage}`);
     }
-  }, [setCurrentPage, navigate]);
+  }, [setCurrentPage]);
 
   const togglePageRead = useCallback(() => {
     const newReadPages = new Set(readPagesSet);

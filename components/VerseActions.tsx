@@ -20,12 +20,16 @@ export const VerseActions: React.FC<VerseActionsProps> = ({ verse }) => {
   return (
     <>
       <div className="mt-2 flex justify-end gap-2">
-        <button
-          onClick={() => setIsAIModalOpen(true)}
-          className="text-xs text-slate-500 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
+        <a
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            setIsAIModalOpen(true);
+          }}
+          className="text-xs text-slate-500 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors cursor-pointer"
         >
           تفسیر هوش
-        </button>
+        </a>
         <span className="text-slate-300 dark:text-slate-600">|</span>
         <a href={khameneiUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-slate-500 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
           فیش رهبری

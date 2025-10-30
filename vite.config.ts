@@ -7,11 +7,6 @@ export default defineConfig({
   base: '/Tawakkul/',
   plugins: [react()],
   build: {
-    outDir: 'docs',
-    rollupOptions: {
-      output: {
-        manualChunks: undefined,
-      },
-    },
-  },
+    outDir: 'docs'
+  }
 })
