@@ -93,7 +93,7 @@ function App(): React.ReactElement {
               />
             </main>
           </div>
-          <div className="w-20 sticky top-6 h-screen">
+          <div className="w-20">
             <ProgressBar
               readCount={readPages.length}
               totalCount={TOTAL_PAGES}
