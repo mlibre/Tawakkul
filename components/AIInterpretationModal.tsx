@@ -19,84 +19,30 @@ export const AIInterpretationModal: React.FC<AIInterpretationModalProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [customPrompt, setCustomPrompt] = useState(DEFAULT_AI_PROMPT);
   const [showPromptEditor, setShowPromptEditor] = useState(false);
+  const [khameneiText, setKhameneiText] = useState<string>('');
+  const [almizanText, setAlmizanText] = useState<string>('');
+  const [hasRequested, setHasRequested] = useState(false);
 
   useEffect(() => {
-    if (isOpen && verseText) {
+    if (isOpen) {
       setInterpretation('');
-      setIsLoading(true);
-
-      const fetchInterpretation = async () => {
-        try {
-          const response = await fetch(`${AI_API_URL}/chat/completions`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              model: 'temp',
-              messages: [
-                {
-                  role: 'user',
-                  content: `${customPrompt} "${verseText}"`
-                }
-              ],
-              temperature: 0.7,
-              stream: true
-            })
-          });
-
-          if (!response.ok) {
-            throw new Error(`API request failed: ${response.status}`);
-          }
-
-          const reader = response.body?.getReader();
-          if (!reader) {
-            throw new Error('Response body is not readable');
-          }
-
-          const decoder = new TextDecoder();
-          let result = '';
-
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-
-            const chunk = decoder.decode(value, { stream: true });
-            const lines = chunk.split('\n');
-
-            for (const line of lines) {
-              if (line.startsWith('data: ')) {
-                const data = line.slice(6);
-                if (data === '[DONE]') continue;
-
-                try {
-                  const parsed = JSON.parse(data);
-                  const content = parsed.choices?.[0]?.delta?.content;
-                  if (content) {
-                    result += content;
-                    setInterpretation(result);
-                  }
-                } catch (e) {
-                  // Ignore parsing errors for incomplete chunks
-                }
-              }
-            }
-          }
-        } catch (error) {
-          console.error('Error fetching AI interpretation:', error);
-          setInterpretation('خطا در دریافت تفسیر هوش مصنوعی');
-        } finally {
-          setIsLoading(false);
-        }
-      };
-
-      fetchInterpretation();
+      setHasRequested(false);
+      setKhameneiText('');
+      setAlmizanText('');
     }
-  }, [isOpen, verseText, customPrompt]);
+  }, [isOpen]);
+
+  const handleRequestInterpretation = () => {
+    setIsLoading(true);
+    setHasRequested(true);
+    getAIInterpretation(verseText, customPrompt, khameneiText || undefined, almizanText || undefined)
+      .then(setInterpretation)
+      .finally(() => setIsLoading(false));
+  };
 
   const handleRegenerate = () => {
     setIsLoading(true);
-    getAIInterpretation(verseText, customPrompt)
+    getAIInterpretation(verseText, customPrompt, khameneiText || undefined, almizanText || undefined)
       .then(setInterpretation)
       .finally(() => setIsLoading(false));
   };
@@ -129,6 +75,32 @@ export const AIInterpretationModal: React.FC<AIInterpretationModalProps> = ({
                 {verseText}
               </p>
             </div>
+          </div>
+
+          <div className="mb-6">
+            <h3 className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-3">
+              محتوی فیش ها رهبری (اختیاری)
+            </h3>
+            <textarea
+              value={khameneiText}
+              onChange={(e) => setKhameneiText(e.target.value)}
+              className="w-full p-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200 text-sm resize-none"
+              rows={4}
+              placeholder="متن تفسیر رهبری را اینجا وارد کنید..."
+            />
+          </div>
+
+          <div className="mb-6">
+            <h3 className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-3">
+              محتوی ترجمه تفسیر المزیان (اختیاری)
+            </h3>
+            <textarea
+              value={almizanText}
+              onChange={(e) => setAlmizanText(e.target.value)}
+              className="w-full p-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200 text-sm resize-none"
+              rows={4}
+              placeholder="متن تفسیر المزیان را اینجا وارد کنید..."
+            />
           </div>
 
           <div className="mb-6">
@@ -181,15 +153,26 @@ export const AIInterpretationModal: React.FC<AIInterpretationModalProps> = ({
               <h3 className="text-sm font-medium text-slate-600 dark:text-slate-400">
                 تفسیر هوش مصنوعی
               </h3>
-              {!showPromptEditor && (
-                <button
-                  onClick={handleRegenerate}
-                  disabled={isLoading}
-                  className="text-xs text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 underline disabled:opacity-50"
-                >
-                  تولید مجدد
-                </button>
-              )}
+              <div className="flex gap-2">
+                {!hasRequested && (
+                  <button
+                    onClick={handleRequestInterpretation}
+                    disabled={isLoading}
+                    className="text-xs bg-purple-600 text-white px-3 py-1 rounded hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    دریافت تفسیر
+                  </button>
+                )}
+                {hasRequested && !showPromptEditor && (
+                  <button
+                    onClick={handleRegenerate}
+                    disabled={isLoading}
+                    className="text-xs text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 underline disabled:opacity-50"
+                  >
+                    تولید مجدد
+                  </button>
+                )}
+              </div>
             </div>
 
             <div className="bg-gradient-to-r from-sky-50 to-purple-50 dark:from-slate-700 dark:to-slate-600 p-6 rounded-lg border border-slate-200 dark:border-slate-600 min-h-[200px]">
@@ -200,7 +183,7 @@ export const AIInterpretationModal: React.FC<AIInterpretationModalProps> = ({
                 </div>
               ) : (
                 <div className="text-right text-slate-800 dark:text-slate-200 leading-loose prose prose-sm dark:prose-invert max-w-none">
-                  <ReactMarkdown>{interpretation || 'در حال دریافت تفسیر...'}</ReactMarkdown>
+                  <ReactMarkdown>{interpretation || (hasRequested ? 'در حال دریافت تفسیر...' : 'برای دریافت تفسیر هوش مصنوعی، ابتدا متن‌های مورد نیاز را وارد کرده و سپس روی دکمه "دریافت تفسیر" کلیک کنید.')}</ReactMarkdown>
                   {isLoading && (
                     <span className="inline-block w-2 h-4 bg-purple-600 animate-pulse ml-1"></span>
                   )}

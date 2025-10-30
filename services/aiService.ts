@@ -1,7 +1,31 @@
 import { AI_API_URL, DEFAULT_AI_PROMPT } from '../config';
 
-export async function getAIInterpretation(verseText: string, customPrompt?: string): Promise<string> {
+export async function getAIInterpretation(verseText: string, customPrompt?: string, khameneiText?: string, almizanText?: string): Promise<string> {
   const prompt = customPrompt || DEFAULT_AI_PROMPT;
+
+  // Build the content with verse and optional texts
+  let content = `
+<VERSE>
+${verseText}
+</VERSE>
+`;
+
+  if (khameneiText) {
+    content += `
+<KHAMENYI_INTERPRTATION_RAW_TEXT>${khameneiText}</KHAMENYI_INTERPRTATION_RAW_TEXT>
+`;
+  }
+
+  if (almizanText) {
+    content += `
+<ALMIZAN_INTERPERATION_RAW_TEXT>${almizanText}</ALMIZAN_INTERPERATION_RAW_TEXT>
+`;
+  }
+
+  content += `
+
+${prompt}
+`;
 
   try {
     const response = await fetch(`${AI_API_URL}/chat/completions`, {
@@ -14,7 +38,7 @@ export async function getAIInterpretation(verseText: string, customPrompt?: stri
         messages: [
           {
             role: 'user',
-            content: `${prompt} "${verseText}"`
+            content: content
           }
         ],
         temperature: 0.7,
