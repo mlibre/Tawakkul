@@ -27,9 +27,6 @@ export const Header: React.FC<HeaderProps> = ({ currentPage, totalPages, transla
         </h1>
         <div className="w-10"></div>
       </div>
-      <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
-        صفحه {currentPage} از {totalPages}
-      </p>
       <div className="flex flex-wrap gap-2 justify-center">
         {translations.map(({ key, label }) => (
           <button

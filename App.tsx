@@ -65,35 +65,41 @@ function App(): React.ReactElement {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-100 via-purple-100 to-pink-100 dark:from-slate-900 dark:via-purple-950 dark:to-slate-800 text-slate-800 dark:text-slate-200 transition-colors duration-500 font-persian">
-      <div className="container mx-auto max-w-4xl p-4 sm:p-6">
-        <Header 
-          currentPage={currentPage}
-          totalPages={TOTAL_PAGES}
-          translation={translation}
-          setTranslation={setTranslation}
-          theme={theme}
-          setTheme={setTheme}
-        />
-        <main>
-          {pageData ? (
-            <VerseList verses={pageData.verses} translationKey={translation} />
-          ) : (
-            <div className="flex justify-center items-center h-96">
-                <p>درحال بارگذاری صفحه...</p>
-            </div>
-          )}
-          <Pagination
-            currentPage={currentPage}
-            totalPages={TOTAL_PAGES}
-            onPageChange={handlePageChange}
-            isPageRead={readPagesSet.has(currentPage)}
-            onToggleRead={togglePageRead}
-          />
-          <ProgressBar
-            readCount={readPages.length}
-            totalCount={TOTAL_PAGES}
-          />
-        </main>
+      <div className="container mx-auto max-w-[61rem] p-4 sm:p-6">
+        <div className="flex gap-6">
+          <div className="flex-1">
+            <Header
+              currentPage={currentPage}
+              totalPages={TOTAL_PAGES}
+              translation={translation}
+              setTranslation={setTranslation}
+              theme={theme}
+              setTheme={setTheme}
+            />
+            <main>
+              {pageData ? (
+                <VerseList verses={pageData.verses} translationKey={translation} />
+              ) : (
+                <div className="flex justify-center items-center h-96">
+                    <p>درحال بارگذاری صفحه...</p>
+                </div>
+              )}
+              <Pagination
+                currentPage={currentPage}
+                totalPages={TOTAL_PAGES}
+                onPageChange={handlePageChange}
+                isPageRead={readPagesSet.has(currentPage)}
+                onToggleRead={togglePageRead}
+              />
+            </main>
+          </div>
+          <div className="w-20 sticky top-6 h-screen">
+            <ProgressBar
+              readCount={readPages.length}
+              totalCount={TOTAL_PAGES}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
