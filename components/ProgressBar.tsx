@@ -17,9 +17,9 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({ readCount, totalCount 
       <div className="text-center text-xs text-slate-500 dark:text-slate-400 mb-4">
         {readCount} از {totalCount}
       </div>
-      <div className="relative h-64 w-4 bg-slate-200 dark:bg-slate-700 rounded-full">
+      <div className="relative h-64 w-4 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
         <div
-          className="absolute bottom-0 bg-gradient-to-t from-blue-500 to-purple-600 w-4 rounded-full transition-all duration-500"
+          className="absolute top-0 bg-gradient-to-b from-blue-500 to-purple-600 w-4 rounded-t-full transition-all duration-500"
           style={{ height: `${percentage}%` }}
         ></div>
       </div>
