@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import ReactMarkdown from 'react-markdown';
 import { getAIInterpretation } from '../services/aiService';
-import { DEFAULT_AI_PROMPT } from '../config';
+import { DEFAULT_AI_PROMPT, AI_API_URL } from '../config';
 
 interface AIInterpretationModalProps {
   isOpen: boolean;
@@ -21,10 +22,75 @@ export const AIInterpretationModal: React.FC<AIInterpretationModalProps> = ({
 
   useEffect(() => {
     if (isOpen && verseText) {
+      setInterpretation('');
       setIsLoading(true);
-      getAIInterpretation(verseText, customPrompt)
-        .then(setInterpretation)
-        .finally(() => setIsLoading(false));
+
+      const fetchInterpretation = async () => {
+        try {
+          const response = await fetch(`${AI_API_URL}/chat/completions`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              model: 'temp',
+              messages: [
+                {
+                  role: 'user',
+                  content: `${customPrompt} "${verseText}"`
+                }
+              ],
+              temperature: 0.7,
+              stream: true
+            })
+          });
+
+          if (!response.ok) {
+            throw new Error(`API request failed: ${response.status}`);
+          }
+
+          const reader = response.body?.getReader();
+          if (!reader) {
+            throw new Error('Response body is not readable');
+          }
+
+          const decoder = new TextDecoder();
+          let result = '';
+
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            const chunk = decoder.decode(value, { stream: true });
+            const lines = chunk.split('\n');
+
+            for (const line of lines) {
+              if (line.startsWith('data: ')) {
+                const data = line.slice(6);
+                if (data === '[DONE]') continue;
+
+                try {
+                  const parsed = JSON.parse(data);
+                  const content = parsed.choices?.[0]?.delta?.content;
+                  if (content) {
+                    result += content;
+                    setInterpretation(result);
+                  }
+                } catch (e) {
+                  // Ignore parsing errors for incomplete chunks
+                }
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching AI interpretation:', error);
+          setInterpretation('خطا در دریافت تفسیر هوش مصنوعی');
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      fetchInterpretation();
     }
   }, [isOpen, verseText, customPrompt]);
 
@@ -35,14 +101,6 @@ export const AIInterpretationModal: React.FC<AIInterpretationModalProps> = ({
       .finally(() => setIsLoading(false));
   };
 
-  const renderMarkdown = (text: string) => {
-    // Simple markdown renderer for basic formatting
-    return text
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\*(.*?)\*/g, '<em>$1</em>')
-      .replace(/`(.*?)`/g, '<code>$1</code>')
-      .replace(/\n/g, '<br>');
-  };
 
   if (!isOpen) return null;
 
@@ -134,19 +192,21 @@ export const AIInterpretationModal: React.FC<AIInterpretationModalProps> = ({
               )}
             </div>
 
-            {isLoading ? (
-              <div className="flex flex-col items-center justify-center p-12 bg-gradient-to-r from-sky-50 to-purple-50 dark:from-slate-700 dark:to-slate-600 rounded-lg border border-slate-200 dark:border-slate-600">
-                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-purple-600 mb-4"></div>
-                <p className="text-slate-600 dark:text-slate-400 text-sm">در حال دریافت تفسیر...</p>
-              </div>
-            ) : (
-              <div className="bg-gradient-to-r from-sky-50 to-purple-50 dark:from-slate-700 dark:to-slate-600 p-6 rounded-lg border border-slate-200 dark:border-slate-600">
-                <div
-                  className="text-right text-slate-800 dark:text-slate-200 leading-relaxed prose prose-sm dark:prose-invert max-w-none"
-                  dangerouslySetInnerHTML={{ __html: renderMarkdown(interpretation) }}
-                />
-              </div>
-            )}
+            <div className="bg-gradient-to-r from-sky-50 to-purple-50 dark:from-slate-700 dark:to-slate-600 p-6 rounded-lg border border-slate-200 dark:border-slate-600 min-h-[200px]">
+              {isLoading && interpretation === '' ? (
+                <div className="flex flex-col items-center justify-center h-full">
+                  <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-purple-600 mb-4"></div>
+                  <p className="text-slate-600 dark:text-slate-400 text-sm">در حال دریافت تفسیر...</p>
+                </div>
+              ) : (
+                <div className="text-right text-slate-800 dark:text-slate-200 leading-loose prose prose-sm dark:prose-invert max-w-none">
+                  <ReactMarkdown>{interpretation || 'در حال دریافت تفسیر...'}</ReactMarkdown>
+                  {isLoading && (
+                    <span className="inline-block w-2 h-4 bg-purple-600 animate-pulse ml-1"></span>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
