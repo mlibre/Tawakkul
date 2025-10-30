@@ -26,24 +26,24 @@ export const VerseActions: React.FC<VerseActionsProps> = ({ verse }) => {
             e.preventDefault();
             setIsAIModalOpen(true);
           }}
-          className="text-xs text-slate-500 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors cursor-pointer"
+          className="mt-1 text-xs text-slate-500 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors cursor-pointer"
         >
           تفسیر هوش
         </a>
         <span className="text-slate-300 dark:text-slate-600">|</span>
-        <a href={khameneiUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-slate-500 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
+        <a href={khameneiUrl} target="_blank" rel="noopener noreferrer" className="mt-1 text-xs text-slate-500 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
           فیش رهبری
         </a>
         <span className="text-slate-300 dark:text-slate-600">|</span>
-        <a href={tafsirNoorUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-slate-500 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
+        <a href={tafsirNoorUrl} target="_blank" rel="noopener noreferrer" className="mt-1 text-xs text-slate-500 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
           تفسیر نمونه
         </a>
         <span className="text-slate-300 dark:text-slate-600">|</span>
-        <a href={alMizanUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-slate-500 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
+        <a href={alMizanUrl} target="_blank" rel="noopener noreferrer" className="mt-1 text-xs text-slate-500 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
           تفسیر المیزان
         </a>
         <span className="text-slate-300 dark:text-slate-600">|</span>
-        <a href={shaanNozulUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-slate-500 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
+        <a href={shaanNozulUrl} target="_blank" rel="noopener noreferrer" className="mt-1 text-xs text-slate-500 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
           شأن نزول
         </a>
       </div>

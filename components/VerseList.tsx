@@ -32,7 +32,7 @@ export const VerseList: React.FC<VerseListProps> = ({ verses, translationKey, re
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => onToggleAyahRead(verse.id)}
-                  className={`rounded-full transition-all duration-300 transform hover:scale-110
+                  className={`mt-2 rounded-full transition-all duration-300 transform hover:scale-110
                     ${readAyahs.has(verse.id)
                       ? 'text-green-600 dark:text-green-400'
                       : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300'
@@ -41,7 +41,7 @@ export const VerseList: React.FC<VerseListProps> = ({ verses, translationKey, re
                 >
                   {readAyahs.has(verse.id) ? '✓' : '○'}
                 </button>
-                <span className="text-slate-300 dark:text-slate-600">|</span>
+                <span className="mt-2 text-slate-300 dark:text-slate-600">|</span>
                 <VerseActions verse={verse} />
               </div>
             </div>

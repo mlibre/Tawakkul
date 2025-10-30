@@ -1,8 +1,10 @@
-const API_URL = 'https://unified-ai-router.onrender.com';
+import { AI_API_URL, DEFAULT_AI_PROMPT } from '../config';
 
-export async function getAIInterpretation(verseText: string): Promise<string> {
+export async function getAIInterpretation(verseText: string, customPrompt?: string): Promise<string> {
+  const prompt = customPrompt || DEFAULT_AI_PROMPT;
+
   try {
-    const response = await fetch(`${API_URL}/chat/completions`, {
+    const response = await fetch(`${AI_API_URL}/chat/completions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -12,7 +14,7 @@ export async function getAIInterpretation(verseText: string): Promise<string> {
         messages: [
           {
             role: 'user',
-            content: `با استفاده از دیدگاه‌های شیعه دوازده‌امامی، این آیه قرآن را تفسیر کن: "${verseText}"`
+            content: `${prompt} "${verseText}"`
           }
         ],
         temperature: 0.7
