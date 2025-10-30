@@ -14,3 +14,8 @@ root.render(
     <App />
   </React.StrictMode>
 );
+
+// Portal container for modals
+const modalRoot = document.createElement('div');
+modalRoot.id = 'modal-root';
+document.body.appendChild(modalRoot);
