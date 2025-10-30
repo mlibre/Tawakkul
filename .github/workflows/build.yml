@@ -4,15 +4,13 @@ on:
   push:
     branches:
       - main
-      - master
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    # fail-fast: true # Uncomment if using a matrix
 
     steps:
       - name: Checkout repository
@@ -31,3 +29,10 @@ jobs:
 
       - name: Build project
         run: npm run build
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "mlibre"
+          git config --global user.email "m.gh@linuxmail.org"
+          git add docs/
+          git diff --staged --quiet || (git commit -m "Update docs with latest build" && git push)
