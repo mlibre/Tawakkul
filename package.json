@@ -18,11 +18,14 @@
   },
   "devDependencies": {
     "@mozilla/readability": "^0.6.0",
+    "@tailwindcss/typography": "^0.5.19",
+    "@tailwindcss/vite": "^4.1.16",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "@vitejs/plugin-react": "^4.2.1",
     "axios": "^1.13.1",
     "jsdom": "^27.1.0",
+    "tailwindcss": "^4.1.16",
     "typescript": "^5.2.2",
     "vite": "^5.2.0"
   }

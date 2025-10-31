@@ -144,7 +144,7 @@ function App(): React.ReactElement {
             <div className="flex justify-center items-center gap-4">
               <button
                 onClick={() => setIsSourcesModalOpen(true)}
-                className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 underline"
+                className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 underline cursor-pointer"
               >
                 منابع
               </button>

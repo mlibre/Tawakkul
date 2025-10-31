@@ -28,7 +28,7 @@ const SourcesModal: React.FC<SourcesModalProps> = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={handleOverlayClick}>
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={handleOverlayClick}>
       <div className="bg-white dark:bg-slate-800 p-8 rounded-lg max-w-4xl w-full mx-4 max-h-[80vh] overflow-y-auto">
         <h2 className="text-xl font-bold mb-6 text-slate-800 dark:text-slate-200">منابع</h2>
         <div className="text-sm text-slate-700 dark:text-slate-300 prose prose-sm dark:prose-invert max-w-none">
