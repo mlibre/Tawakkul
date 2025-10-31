@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import ReactMarkdown from 'react-markdown';
 import { getAIInterpretation } from '../services/aiService';
-import { DEFAULT_AI_PROMPT, AI_API_URL } from '../config';
+import { DEFAULT_AI_PROMPT } from '../config';
 
 interface AIInterpretationModalProps {
   isOpen: boolean;
@@ -207,9 +207,6 @@ export const AIInterpretationModal: React.FC<AIInterpretationModalProps> = ({
               </div>
             )}
 
-            <div className="text-xs text-slate-500 dark:text-slate-500 mb-4 p-2 bg-slate-50 dark:bg-slate-700 rounded">
-              پرسش ارسال شده: <strong>{customPrompt}</strong> "{verseText}"
-            </div>
           </div>
 
           <div>
