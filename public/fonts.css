@@ -1,0 +1,55 @@
+@font-face {
+	font-family: 'Amiri';
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url('./fonts/amiri-regular.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: 'Amiri';
+	font-style: normal;
+	font-weight: 700;
+	font-display: swap;
+	src: url('./fonts/amiri-bold.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: 'Vazirmatn';
+	font-style: normal;
+	font-weight: 300;
+	font-display: swap;
+	src: url('./fonts/vazirmatn-light.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: 'Vazirmatn';
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url('./fonts/vazirmatn-regular.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: 'Vazirmatn';
+	font-style: normal;
+	font-weight: 500;
+	font-display: swap;
+	src: url('./fonts/vazirmatn-medium.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: 'Vazirmatn';
+	font-style: normal;
+	font-weight: 600;
+	font-display: swap;
+	src: url('./fonts/vazirmatn-semibold.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: 'Vazirmatn';
+	font-style: normal;
+	font-weight: 700;
+	font-display: swap;
+	src: url('./fonts/vazirmatn-bold.ttf') format('truetype');
+}
