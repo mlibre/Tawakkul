@@ -117,9 +117,6 @@ export const AIInterpretationModal: React.FC<AIInterpretationModalProps> = ({
 
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
           <div className="mb-6">
-            <h3 className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-3">
-              آیه قرآن
-            </h3>
             <div className="bg-gradient-to-r from-sky-50 to-purple-50 dark:from-slate-700 dark:to-slate-600 p-4 rounded-lg border border-slate-200 dark:border-slate-600">
               <p className="text-right text-slate-800 dark:text-slate-200 font-arabic text-lg leading-relaxed">
                 {verseText}
