@@ -56,13 +56,13 @@ ${verseText}
 
   if (localKhameneiText) {
     content += `
-<KHAMENYI_INTERPRTATION_RAW_TEXT>${localKhameneiText}</KHAMENYI_INTERPRTATION_RAW_TEXT>
+<interpretation author="Ayatollah Seyyed Ali Khamenei">${localKhameneiText}</interpretation>
 `;
   }
 
   if (almizanText) {
     content += `
-<ALMIZAN_INTERPERATION_RAW_TEXT>${almizanText}</ALMIZAN_INTERPERATION_RAW_TEXT>
+<interpretation author="Allameh Mohammad Hossein Tabatabaei">${almizanText}</interpretation>
 `;
   }
 

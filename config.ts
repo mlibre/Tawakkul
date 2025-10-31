@@ -1,3 +1,3 @@
 export const BASENAME = "/Tawakkul";
 export const AI_API_URL = 'https://unified-ai-router-personal.onrender.com';
-export const DEFAULT_AI_PROMPT = 'نکات مهم و خلاصهٔ تفاسیر بالا را بگو. دقت کن هیچ حقیقتی را از خودت نسازی. خلاصه و نکات فقط بر اساس نوشته‌های بالا باشد. فقط به اطلاعاتِ موجود در متن استناد کن و هیچ‌گونه اضافه‌گویی نداشته باش.';
+export const DEFAULT_AI_PROMPT = 'Analyze the provided Islamic interpretations and provide a comprehensive yet concise explanation in Persian. Be truthful and base your response only on the provided texts. Write your response in Persian language.';
