@@ -6,8 +6,10 @@ import axios from 'axios';
 
 // Configuration
 const OUTPUT_FILE = 'public/khamenei-interpretations.json';
+const SURAH_FOLDER = 'public/khamenei-interpretations';
 const DELAY_MS = 1000; // Delay between requests to avoid rate limiting
 const MAX_RETRIES = 3;
+const CONCURRENT_REQUESTS = 99; // Number of parallel requests
 
 // Load Quran data to get accurate verse counts
 let quranData = [];
@@ -84,30 +86,78 @@ async function generateOfflineKhameneiData() {
     }
   });
 
-  // Process each verse from quran.json
-  for (const [verseRef, verse] of surahAyahMap) {
-    // Skip if already processed
-    if (interpretations[verseRef]) {
-      console.log(`Skipping ${verseRef} (already exists)`);
-      continue;
-    }
+  // Get verses that need processing
+  const versesToProcess = Array.from(surahAyahMap.entries()).filter(([verseRef]) => !interpretations[verseRef]);
 
-    console.log(`Processing ${verseRef}...`);
+  console.log(`Processing ${versesToProcess.length} verses with ${CONCURRENT_REQUESTS} parallel requests...`);
 
-    const interpretation = await fetchKhameneiInterpretation(verseRef);
-    if (interpretation) {
-      interpretations[verseRef] = interpretation;
+  // Process verses in batches
+  for (let i = 0; i < versesToProcess.length; i += CONCURRENT_REQUESTS) {
+    const batch = versesToProcess.slice(i, i + CONCURRENT_REQUESTS);
+    console.log(`Processing batch ${Math.floor(i / CONCURRENT_REQUESTS) + 1}/${Math.ceil(versesToProcess.length / CONCURRENT_REQUESTS)} (${batch.length} verses)`);
 
-      // Save progress after each successful fetch
+    // Process batch in parallel
+    const promises = batch.map(async ([verseRef, verse]) => {
+      console.log(`Processing ${verseRef}...`);
+
+      const interpretation = await fetchKhameneiInterpretation(verseRef);
+      if (interpretation) {
+        interpretations[verseRef] = interpretation;
+        return verseRef;
+      }
+      return null;
+    });
+
+    // Wait for all requests in this batch to complete
+    const results = await Promise.all(promises);
+    const successful = results.filter(result => result !== null);
+
+    if (successful.length > 0) {
+      // Save progress after each batch
       fs.writeFileSync(OUTPUT_FILE, JSON.stringify(interpretations, null, 2));
-      console.log(`Saved progress: ${Object.keys(interpretations).length} interpretations`);
+      console.log(`Batch completed: ${successful.length} successful, ${Object.keys(interpretations).length} total interpretations saved`);
     }
 
-    // Delay between requests
-    await new Promise(resolve => setTimeout(resolve, DELAY_MS));
+    // Small delay between batches to be respectful
+    if (i + CONCURRENT_REQUESTS < versesToProcess.length) {
+      await new Promise(resolve => setTimeout(resolve, DELAY_MS));
+    }
   }
 
   console.log(`Completed! Total interpretations: ${Object.keys(interpretations).length}`);
+
+  // Create per-surah JSON files
+  await createSurahFiles(interpretations);
+}
+
+// Create individual JSON files for each surah
+async function createSurahFiles(interpretations) {
+  console.log('Creating per-surah JSON files...');
+
+  // Ensure the folder exists
+  if (!fs.existsSync(SURAH_FOLDER)) {
+    fs.mkdirSync(SURAH_FOLDER, { recursive: true });
+  }
+
+  // Group interpretations by surah
+  const surahInterpretations = {};
+
+  Object.entries(interpretations).forEach(([verseRef, interpretation]) => {
+    const [surahNum] = verseRef.split(':').map(Number);
+    if (!surahInterpretations[surahNum]) {
+      surahInterpretations[surahNum] = {};
+    }
+    surahInterpretations[surahNum][verseRef] = interpretation;
+  });
+
+  // Create a JSON file for each surah
+  for (const [surahNum, surahData] of Object.entries(surahInterpretations)) {
+    const filePath = path.join(SURAH_FOLDER, `${surahNum}.json`);
+    fs.writeFileSync(filePath, JSON.stringify(surahData, null, 2));
+    console.log(`Created ${filePath} with ${Object.keys(surahData).length} verses`);
+  }
+
+  console.log(`Created ${Object.keys(surahInterpretations).length} surah files`);
 }
 
 // Run the script
