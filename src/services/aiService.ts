@@ -85,7 +85,7 @@ ${prompt}
             content: content
           }
         ],
-        temperature: 0.3,
+        temperature: 0.2,
         stream: true
       })
     });
