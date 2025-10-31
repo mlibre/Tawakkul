@@ -109,7 +109,7 @@ export const AIInterpretationModal: React.FC<AIInterpretationModalProps> = ({
           </h2>
           <button
             onClick={onClose}
-            className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-2xl leading-none"
+            className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-2xl leading-none cursor-pointer"
           >
             ×
           </button>
@@ -184,13 +184,13 @@ export const AIInterpretationModal: React.FC<AIInterpretationModalProps> = ({
                     <button
                       onClick={handleRegenerate}
                       disabled={isLoading}
-                      className={`text-xs text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 underline disabled:opacity-50 ${isLoading ? 'cursor-not-allowed' : ''}`}
+                      className={`text-xs text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 underline disabled:opacity-50 ${isLoading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                     >
                       {isLoading ? 'در حال تولید...' : 'تولید مجدد'}
                     </button>
                     <button
                       onClick={() => setShowPromptEditor(!showPromptEditor)}
-                      className="text-xs text-slate-600 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 underline"
+                      className="text-xs text-slate-600 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 underline cursor-pointer"
                     >
                       تنظیمات پرسش
                     </button>
@@ -213,13 +213,13 @@ export const AIInterpretationModal: React.FC<AIInterpretationModalProps> = ({
                   <button
                     onClick={handleRegenerate}
                     disabled={isLoading}
-                    className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                    className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm cursor-pointer"
                   >
                     تولید مجدد
                   </button>
                   <button
                     onClick={() => setCustomPrompt(DEFAULT_AI_PROMPT)}
-                    className="px-4 py-2 border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-400 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 text-sm"
+                    className="px-4 py-2 border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-400 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 text-sm cursor-pointer"
                   >
                     بازنشانی
                   </button>
