@@ -164,21 +164,44 @@ export const AIInterpretationModal: React.FC<AIInterpretationModalProps> = ({
             />
           </div>
 
-          <div className="mb-6">
+          <div>
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-medium text-slate-600 dark:text-slate-400">
-                تنظیمات پرسش
+                تفسیر هوش مصنوعی
               </h3>
-              <button
-                onClick={() => setShowPromptEditor(!showPromptEditor)}
-                className="text-xs text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 underline"
-              >
-                {showPromptEditor ? 'پنهان کردن' : 'ویرایش پرسش'}
-              </button>
+              <div className="flex gap-2">
+                {!hasRequested && (
+                  <button
+                    onClick={handleRequestInterpretation}
+                    disabled={isLoading}
+                    className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                  >
+                    دریافت تفسیر
+                  </button>
+                )}
+                {hasRequested && (
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handleRegenerate}
+                      disabled={isLoading}
+                      className={`text-xs text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 underline disabled:opacity-50 ${isLoading ? 'cursor-not-allowed' : ''}`}
+                    >
+                      {isLoading ? 'در حال تولید...' : 'تولید مجدد'}
+                    </button>
+                    <button
+                      onClick={() => setShowPromptEditor(!showPromptEditor)}
+                      className="text-xs text-slate-600 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 underline"
+                    >
+                      تنظیمات پرسش
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
 
             {showPromptEditor && (
-              <div className="mb-4">
+              <div className="mb-4 p-4 bg-slate-50 dark:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-600">
+                <h4 className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">تنظیمات پرسش</h4>
                 <textarea
                   value={customPrompt}
                   onChange={(e) => setCustomPrompt(e.target.value)}
@@ -203,35 +226,6 @@ export const AIInterpretationModal: React.FC<AIInterpretationModalProps> = ({
                 </div>
               </div>
             )}
-
-          </div>
-
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-medium text-slate-600 dark:text-slate-400">
-                تفسیر هوش مصنوعی
-              </h3>
-              <div className="flex gap-2">
-                {!hasRequested && (
-                  <button
-                    onClick={handleRequestInterpretation}
-                    disabled={isLoading}
-                    className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-                  >
-                    دریافت تفسیر
-                  </button>
-                )}
-                {hasRequested && !showPromptEditor && (
-                  <button
-                    onClick={handleRegenerate}
-                    disabled={isLoading}
-                    className={`text-xs text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 underline disabled:opacity-50 ${isLoading ? 'cursor-not-allowed' : ''}`}
-                  >
-                    {isLoading ? 'در حال تولید...' : 'تولید مجدد'}
-                  </button>
-                )}
-              </div>
-            </div>
 
             <div className="bg-gradient-to-r from-sky-50 to-purple-50 dark:from-slate-700 dark:to-slate-600 p-6 rounded-lg border border-slate-200 dark:border-slate-600 min-h-[200px]">
               <div className="text-right text-slate-800 dark:text-slate-200 leading-loose prose prose-sm dark:prose-invert max-w-none">
