@@ -12,11 +12,11 @@ interface PaginationProps {
 
 export const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPageChange, isPageRead, onToggleRead }) => {
   return (
-    <div className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-lg rounded-2xl shadow-lg p-4 mb-6 flex flex-col items-center gap-4 border border-white/30 dark:border-slate-700/50">
+    <div className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-lg rounded-2xl shadow-lg p-4 mb-6 md:mb-6 mb-0 flex md:flex-col flex-row items-center gap-4 border border-white/30 dark:border-slate-700/50">
       <div className="text-sm font-semibold text-slate-600 dark:text-slate-300 text-center whitespace-nowrap">
         صفحه {currentPage}
       </div>
-      <div className="flex flex-col items-center gap-2">
+      <div className="flex md:flex-col flex-row items-center gap-2">
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}

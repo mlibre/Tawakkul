@@ -82,7 +82,7 @@ function App(): React.ReactElement {
     <>
       <div className="min-h-screen bg-gradient-to-br from-sky-100 via-purple-100 to-pink-100 dark:from-slate-900 dark:via-purple-950 dark:to-slate-800 text-slate-800 dark:text-slate-200 transition-colors duration-500 font-persian">
         <div className="container mx-auto max-w-[61rem] p-4 sm:p-6">
-          <div className="flex gap-6">
+          <div className="flex flex-col md:flex-row gap-6">
             <div className="flex-1">
               <Header
                 currentPage={currentPage}
@@ -102,7 +102,20 @@ function App(): React.ReactElement {
                 )}
               </main>
             </div>
-            <div className="w-20 flex flex-col gap-6">
+            <div className="md:hidden flex flex-col gap-4 mt-6">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={TOTAL_PAGES}
+                onPageChange={handlePageChange}
+                isPageRead={readPagesSet.has(currentPage)}
+                onToggleRead={togglePageRead}
+              />
+              <ProgressBar
+                readCount={readPages.length}
+                totalCount={TOTAL_PAGES}
+              />
+            </div>
+            <div className="hidden md:flex w-20 flex-col gap-6">
               <ProgressBar
                 readCount={readPages.length}
                 totalCount={TOTAL_PAGES}
