@@ -72,7 +72,18 @@ function App(): React.ReactElement {
       newReadAyahs.add(ayahId);
     }
     setReadAyahs(Array.from(newReadAyahs));
-  }, [readAyahsSet, setReadAyahs]);
+
+    // Auto-mark page as read when all ayahs are read
+    if (pageData) {
+      const pageAyahIds = pageData.verses.map(v => v.id);
+      const allRead = pageAyahIds.length > 0 && pageAyahIds.every(id => newReadAyahs.has(id));
+      if (allRead) {
+        const newReadPages = new Set(readPagesSet);
+        newReadPages.add(currentPage);
+        setReadPages(Array.from(newReadPages));
+      }
+    }
+  }, [readAyahsSet, setReadAyahs, pageData, currentPage, readPagesSet, setReadPages]);
 
   if (isDataLoading) {
     return <LoadingSpinner />;
