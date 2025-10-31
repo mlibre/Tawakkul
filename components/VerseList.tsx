@@ -22,7 +22,7 @@ export const VerseList: React.FC<VerseListProps> = ({ verses, translationKey, re
                 ({verse.ayah_persian})
               </span>
             </p>
-            <p className="font-persian text-base sm:text-lg text-slate-600 dark:text-slate-300 text-right leading-loose">
+            <p className="font-persian text-base sm:text-lg text-slate-600 dark:text-slate-300 text-right" style={{ lineHeight: '2rem' }}>
               {verse.verse[translationKey]}
             </p>
             <div className="flex justify-between items-center mt-4">
