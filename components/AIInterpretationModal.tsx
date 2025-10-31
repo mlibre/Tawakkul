@@ -33,19 +33,38 @@ export const AIInterpretationModal: React.FC<AIInterpretationModalProps> = ({
       setHasRequested(false);
       setKhameneiText('');
       setAlmizanText('');
+
+      // Auto-load Khamenei interpretation if available
+      if (surahNumber && ayahNumber) {
+        const verseRef = `${surahNumber}:${ayahNumber}`;
+        // Load Khamenei text in background
+        fetch(`khamenei-interpretations/${surahNumber}.json`)
+          .then(response => response.ok ? response.json() : null)
+          .then(data => {
+            if (data && data[verseRef]?.content) {
+              setKhameneiText(data[verseRef].content);
+            }
+          })
+          .catch(error => {
+            console.warn('Could not auto-load Khamenei interpretation:', error);
+          });
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, surahNumber, ayahNumber]);
 
   const handleRequestInterpretation = () => {
     setIsLoading(true);
     setHasRequested(true);
     setInterpretation('');
 
+    const verseRef = surahNumber && ayahNumber ? `${surahNumber}:${ayahNumber}` : undefined;
+
     getAIInterpretation(
       verseText,
       customPrompt,
       khameneiText || undefined,
       almizanText || undefined,
+      verseRef,
       (chunk) => setInterpretation(chunk)
     )
       .then(() => {})
@@ -60,11 +79,14 @@ export const AIInterpretationModal: React.FC<AIInterpretationModalProps> = ({
     setIsLoading(true);
     setInterpretation('');
 
+    const verseRef = surahNumber && ayahNumber ? `${surahNumber}:${ayahNumber}` : undefined;
+
     getAIInterpretation(
       verseText,
       customPrompt,
       khameneiText || undefined,
       almizanText || undefined,
+      verseRef,
       (chunk) => setInterpretation(chunk)
     )
       .then(() => {})

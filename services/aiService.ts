@@ -1,13 +1,51 @@
 import { AI_API_URL, DEFAULT_AI_PROMPT } from '../config';
 
+// Cache for loaded surah interpretations
+const surahCache = new Map<string, any>();
+
+// Load Khamenei interpretation from local files
+async function loadKhameneiInterpretation(verseRef: string): Promise<string | undefined> {
+  try {
+    const [surahNum] = verseRef.split(':');
+
+    // Check cache first
+    if (surahCache.has(surahNum)) {
+      const surahData = surahCache.get(surahNum);
+      return surahData[verseRef]?.content;
+    }
+
+    // Load surah file
+    const response = await fetch(`khamenei-interpretations/${surahNum}.json`);
+    if (!response.ok) {
+      console.warn(`Could not load interpretations for surah ${surahNum}`);
+      return undefined;
+    }
+
+    const surahData = await response.json();
+    surahCache.set(surahNum, surahData);
+
+    return surahData[verseRef]?.content?.trim().replace(/^\s+/, '');
+  } catch (error) {
+    console.warn('Error loading local Khamenei interpretation:', error);
+    return undefined;
+  }
+}
+
 export async function getAIInterpretation(
   verseText: string,
   customPrompt?: string,
   khameneiText?: string,
   almizanText?: string,
+  verseRef?: string,
   onChunk?: (chunk: string) => void
 ): Promise<string> {
   const prompt = customPrompt || DEFAULT_AI_PROMPT;
+
+  // Try to load Khamenei interpretation from local files if verseRef is provided
+  let localKhameneiText = khameneiText;
+  if (verseRef && !khameneiText) {
+    localKhameneiText = await loadKhameneiInterpretation(verseRef);
+  }
 
   // Build the content with verse and optional texts
   let content = `
@@ -16,9 +54,9 @@ ${verseText}
 </VERSE>
 `;
 
-  if (khameneiText) {
+  if (localKhameneiText) {
     content += `
-<KHAMENYI_INTERPRTATION_RAW_TEXT>${khameneiText}</KHAMENYI_INTERPRTATION_RAW_TEXT>
+<KHAMENYI_INTERPRTATION_RAW_TEXT>${localKhameneiText}</KHAMENYI_INTERPRTATION_RAW_TEXT>
 `;
   }
 
