@@ -102,7 +102,7 @@ function App(): React.ReactElement {
                 )}
               </main>
             </div>
-            <div className="md:hidden flex flex-col gap-4 mt-6">
+            <div className="md:hidden bg-white/60 dark:bg-slate-800/60 backdrop-blur-lg rounded-2xl shadow-lg p-4 mt-0 border border-white/30 dark:border-slate-700/50 flex flex-col gap-4 items-center">
               <Pagination
                 currentPage={currentPage}
                 totalPages={TOTAL_PAGES}
