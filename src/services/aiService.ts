@@ -48,21 +48,23 @@ export async function getAIInterpretation(
   }
 
   // Build the content with verse and optional texts
+  const [surah, ayah] = verseRef ? verseRef.split(':') : [];
+
   let content = `
-<VERSE>
+<quran-verse${surah ? ` surah="${surah}"` : ''}${ayah ? ` ayah="${ayah}"` : ''}>
 ${verseText}
-</VERSE>
+</quran-verse>
 `;
 
   if (localKhameneiText) {
     content += `
-<interpretation author="Ayatollah Seyyed Ali Khamenei">${localKhameneiText}</interpretation>
+<interpretation author="Ayatollah Seyyed Ali Khamenei">\n${localKhameneiText}\n</interpretation>
 `;
   }
 
   if (almizanText) {
     content += `
-<interpretation author="Allameh Mohammad Hossein Tabatabaei">${almizanText}</interpretation>
+<interpretation author="Allameh Mohammad Hossein Tabatabaei">\n${almizanText}\n</interpretation>
 `;
   }
 
@@ -71,6 +73,7 @@ ${verseText}
 ${prompt}
 `;
 
+  // console.log(content);
   try {
     const response = await fetch(`${AI_API_URL}/chat/completions`, {
       method: 'POST',
@@ -85,7 +88,7 @@ ${prompt}
             content: content
           }
         ],
-        temperature: 0.2,
+        temperature: 0.1,
         stream: true
       })
     });
