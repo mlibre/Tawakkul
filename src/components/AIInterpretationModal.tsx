@@ -146,7 +146,7 @@ export const AIInterpretationModal: React.FC<AIInterpretationModalProps> = ({
 
           <div className="mb-6">
             <h3 className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-3">
-              محتوی ترجمه تفسیر المزیان <a
+              محتوی ترجمه تفسیر المیزان <a
                 href={`https://quran.inoor.ir/fa/ayah/${surahNumber || 1}/${ayahNumber || 1}/commentary?book=121`}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -160,7 +160,7 @@ export const AIInterpretationModal: React.FC<AIInterpretationModalProps> = ({
               onChange={(e) => setAlmizanText(e.target.value)}
               className="w-full p-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200 text-sm resize-none"
               rows={3}
-              placeholder="متن تفسیر المزیان را اینجا وارد کنید..."
+              placeholder="متن تفسیر المیزان را اینجا وارد کنید..."
             />
           </div>
 
