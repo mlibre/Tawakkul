@@ -26,6 +26,7 @@ export const AIInterpretationModal: React.FC<AIInterpretationModalProps> = ({
   const [khameneiText, setKhameneiText] = useState<string>('');
   const [almizanText, setAlmizanText] = useState<string>('');
   const [hasRequested, setHasRequested] = useState(false);
+  const [autoRequested, setAutoRequested] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -43,6 +44,10 @@ export const AIInterpretationModal: React.FC<AIInterpretationModalProps> = ({
           .then(data => {
             if (data && data[verseRef]?.content) {
               setKhameneiText(data[verseRef].content);
+              if (!autoRequested) {
+                handleRequestInterpretation();
+                setAutoRequested(true);
+              }
             }
           })
           .catch(error => {
@@ -173,8 +178,8 @@ export const AIInterpretationModal: React.FC<AIInterpretationModalProps> = ({
                 {!hasRequested && (
                   <button
                     onClick={handleRequestInterpretation}
-                    disabled={isLoading}
-                    className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                    disabled={true}
+                    className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm cursor-not-allowed"
                   >
                     دریافت تفسیر
                   </button>
