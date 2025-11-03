@@ -74,7 +74,8 @@ ${prompt}
 `;
 
   // console.log(content);
-  try {
+  try
+  {
     const response = await fetch(`${AI_API_URL}/chat/completions`, {
       method: 'POST',
       headers: {
@@ -131,9 +132,10 @@ ${prompt}
         }
       }
     }
-
     return result || 'تفسیری یافت نشد';
-  } catch (error) {
+  }
+  catch (error)
+  {
     console.error('Error fetching AI interpretation:', error);
     return 'خطا در دریافت تفسیر هوش مصنوعی';
   }
