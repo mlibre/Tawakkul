@@ -1,15 +1,17 @@
 @import "tailwindcss";
 
 body {
-	font-family: 'Vazirmatn', sans-serif;
+	font-family: 'NotoNaskhArabic', sans-serif;
 }
 
 .font-arabic {
 	font-family: 'NotoNaskhArabic', serif;
+	text-shadow: 0.4px 0.4px 2px rgba(0, 0, 0, 0.1);
 }
 
 .font-persian {
 	font-family: 'Vazirmatn', sans-serif;
+	text-shadow: 0.4px 0.4px 2px rgba(0, 0, 0, 0.05);
 }
 
 @custom-variant dark (&:where(.dark, .dark *));
