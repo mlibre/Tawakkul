@@ -42,7 +42,7 @@ export const VerseList: React.FC<VerseListProps> = ({ verses, translationKey, re
                   {readAyahs.has(verse.id) ? '✓' : '○'}
                 </button>
               </div>
-              <div className="flex flex-wrap justify-end gap-1 sm:gap-2 w-full sm:w-auto">
+              <div className="flex flex-wrap justify-center w-full sm:w-auto text-center">
                 <VerseActions verse={verse} />
               </div>
             </div>
