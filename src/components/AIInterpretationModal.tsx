@@ -74,7 +74,7 @@ export const AIInterpretationModal: React.FC<AIInterpretationModalProps> = ({
     )
       .then(() => {})
       .catch((error) => {
-        console.error('Error fetching AI interpretation:', error);
+        console.error('Error fetching AI interpretation:', error.stack || error);
         setInterpretation('خطا در دریافت تفسیر هوش مصنوعی');
       })
       .finally(() => setIsLoading(false));
@@ -96,7 +96,7 @@ export const AIInterpretationModal: React.FC<AIInterpretationModalProps> = ({
     )
       .then(() => {})
       .catch((error) => {
-        console.error('Error fetching AI interpretation:', error);
+        console.error('Error fetching AI interpretation:', error.stack || error);
         setInterpretation('خطا در دریافت تفسیر هوش مصنوعی');
       })
       .finally(() => setIsLoading(false));
