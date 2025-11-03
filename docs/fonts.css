@@ -53,3 +53,11 @@
 	font-display: swap;
 	src: url('./fonts/vazirmatn-bold.ttf') format('truetype');
 }
+
+@font-face {
+	font-family: 'NotoNaskhArabic';
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url('./fonts/Noto_Naskh_Arabic/NotoNaskhArabic-VariableFont_wght.ttf') format('truetype');
+}
