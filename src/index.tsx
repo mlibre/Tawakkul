@@ -20,3 +20,14 @@ root.render(
 const modalRoot = document.createElement('div');
 modalRoot.id = 'modal-root';
 document.body.appendChild(modalRoot);
+
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').then(registration => {
+      console.log('SW registered: ', registration);
+    }).catch(registrationError => {
+      console.log('SW registration failed: ', registrationError);
+    });
+  });
+}
