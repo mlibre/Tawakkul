@@ -17,6 +17,7 @@ export const AIInterpretation: React.FC<AIInterpretationProps> = ({ verse }) => 
   const [almizanText, setAlmizanText] = useState<string>('');
   const [hasRequested, setHasRequested] = useState(false);
   const [autoRequested, setAutoRequested] = useState(false);
+  const [showSources, setShowSources] = useState(false);
 
   const { verse: verseData, surah, ayah } = verse;
   const surahNumber = surah.number;
@@ -172,7 +173,7 @@ export const AIInterpretation: React.FC<AIInterpretationProps> = ({ verse }) => 
               </div>
             ) : (
               <div className="flex items-center justify-center h-full">
-                <p className="text-slate-600 dark:text-slate-400 text-sm">برای دریافت تفسیر هوش مصنوعی، ابتدا متن‌های مورد نیاز را وارد کرده و سپس روی دکمه "دریافت تفسیر" کلیک کنید.</p>
+                <p className="text-slate-600 dark:text-slate-400 text-sm text-center">تفسیر با هوش مصنوعی در حال تولید شدن است. در صورت فراهم بودن فیش رهبری و منابع دیگر، از آن ها برای تفسیر استفاده میشود. امکان خطا و غلط وجود دارد.</p>
               </div>
             )}
             {interpretation && isLoading && (
@@ -182,47 +183,58 @@ export const AIInterpretation: React.FC<AIInterpretationProps> = ({ verse }) => 
         </div>
       </div>
 
-      {/* Khamenei and Al-Mizan Textareas */}
-      <div className="mt-6">
-        <div className="mb-4">
-          <h3 className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-3">
-            محتوی فیش های رهبری <a
-              href={`https://farsi.khamenei.ir/newspart-index?sid=${surahNumber || 1}&npt=7&aya=${ayahNumber || 1}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 underline ml-2"
-            >
-              لینک
-            </a>
-          </h3>
-          <textarea
-            value={khameneiText}
-            onChange={(e) => setKhameneiText(e.target.value)}
-            className="w-full p-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-sm resize-none"
-            rows={3}
-            placeholder="متن تفسیر رهبری را اینجا وارد کنید..."
-          />
-        </div>
+      {/* Collapsible Supplementary Sources */}
+      <div className="mt-4">
+        <button
+          onClick={() => setShowSources(!showSources)}
+          className="text-xs text-slate-500 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors cursor-pointer"
+        >
+          {showSources ? 'پنهان کردن منابع' : 'نمایش منابع'}
+        </button>
 
-        <div>
-          <h3 className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-3">
-            محتوی ترجمه تفسیر المیزان <a
-              href={`https://quran.inoor.ir/fa/ayah/${surahNumber || 1}/${ayahNumber || 1}/commentary?book=121`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 underline ml-2"
-            >
-              لینک
-            </a>
-          </h3>
-          <textarea
-            value={almizanText}
-            onChange={(e) => setAlmizanText(e.target.value)}
-            className="w-full p-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-sm resize-none"
-            rows={3}
-            placeholder="متن تفسیر المیزان را اینجا وارد کنید..."
-          />
-        </div>
+        {showSources && (
+          <div className="mt-4 border-t border-slate-200 dark:border-slate-700 pt-4">
+            <div className="mb-4">
+              <h3 className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-3">
+                محتوی فیش های رهبری <a
+                  href={`https://farsi.khamenei.ir/newspart-index?sid=${surahNumber || 1}&npt=7&aya=${ayahNumber || 1}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 underline ml-2"
+                >
+                  لینک
+                </a>
+              </h3>
+              <textarea
+                value={khameneiText}
+                onChange={(e) => setKhameneiText(e.target.value)}
+                className="w-full p-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-sm resize-none"
+                rows={3}
+                placeholder="متن تفسیر رهبری را اینجا وارد کنید..."
+              />
+            </div>
+
+            <div>
+              <h3 className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-3">
+                محتوی ترجمه تفسیر المیزان <a
+                  href={`https://quran.inoor.ir/fa/ayah/${surahNumber || 1}/${ayahNumber || 1}/commentary?book=121`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 underline ml-2"
+                >
+                  لینک
+                </a>
+              </h3>
+              <textarea
+                value={almizanText}
+                onChange={(e) => setAlmizanText(e.target.value)}
+                className="w-full p-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-sm resize-none"
+                rows={3}
+                placeholder="متن تفسیر المیزان را اینجا وارد کنید..."
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
