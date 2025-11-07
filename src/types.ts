@@ -13,9 +13,6 @@ export type Theme = 'light' | 'dark';
 
 export interface VerseDetails {
   farsi_makarem: string;
-  farsi_ansarian: string;
-  farsi_fooladvand: string;
-  farsi_mojtabavi: string;
   arabic_enhanced: string;
 }
 
