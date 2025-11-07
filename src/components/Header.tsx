@@ -23,7 +23,16 @@ export const Header: React.FC<HeaderProps> = ({ pageData, theme, setTheme }) => 
         <div className="w-10"></div>
       </div>
       <div className="flex justify-around items-center text-sm text-slate-600 dark:text-slate-400">
-        <span>ترجمه: مکارم</span>
+        <span>
+          ترجمه: <a
+            href="https://quran.makarem.ir"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-200 underline"
+          >
+            مکارم
+          </a>
+        </span>
         <span>سوره: {surahName}</span>
         <span>جزء: {juz}</span>
       </div>
