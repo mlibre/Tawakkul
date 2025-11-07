@@ -4,7 +4,7 @@ export const AI_API_URL = 'https://unified-ai-router-personal.onrender.com';
 export const DEFAULT_AI_PROMPT = `
 Analyze the provided Quran verse and its Islamic interpretations, and then:
 * Provide a detailed, comprehensive, yet concise explanation.
-* Use ONLY the text inside the <quran-verse> and <interpretation> tags.
+* Rely ONLY on the content inside the <quran-verse> and <interpretation> tags.
 * Respond in Persian, using an active and direct style.
-* Be truthful and base your response solely on the provided texts.
+* Be truthful and base your response solely on the provided content.
 `;

@@ -1,7 +1,8 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import type { Verse, TranslationKey } from '../types';
 import { VerseActions } from './VerseActions';
+import { AIInterpretation } from './AIInterpretation';
 
 interface VerseListProps {
   verses: Verse[];
@@ -11,6 +12,12 @@ interface VerseListProps {
 }
 
 export const VerseList: React.FC<VerseListProps> = ({ verses, translationKey, readAyahs, onToggleAyahRead }) => {
+  const [activeAIInterpretation, setActiveAIInterpretation] = useState<number | null>(null);
+
+  const handleToggleAI = (verseId: number) => {
+    setActiveAIInterpretation(prev => (prev === verseId ? null : verseId));
+  };
+
   return (
     <div className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-lg rounded-2xl shadow-lg p-4 sm:p-8 mb-6 border border-white/30 dark:border-slate-700/50">
       <div className="space-y-6">
@@ -43,9 +50,12 @@ export const VerseList: React.FC<VerseListProps> = ({ verses, translationKey, re
                 </button>
               </div>
               <div className="flex flex-wrap justify-center w-full sm:w-auto text-center">
-                <VerseActions verse={verse} />
+                <VerseActions verse={verse} onToggleAIInterpretation={() => handleToggleAI(verse.id)} />
               </div>
             </div>
+            {activeAIInterpretation === verse.id && (
+              <AIInterpretation verse={verse} />
+            )}
           </div>
         ))}
       </div>
