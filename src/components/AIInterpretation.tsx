@@ -64,7 +64,7 @@ export const AIInterpretation: React.FC<AIInterpretationProps> = ({ verse }) => 
       khameneiText || undefined,
       almizanText || undefined,
       verseRef,
-      (chunk) => setInterpretation(chunk)
+      (chunk) => setInterpretation(prev => prev + chunk)
     )
       .then(() => {})
       .catch((error) => {
@@ -86,7 +86,7 @@ export const AIInterpretation: React.FC<AIInterpretationProps> = ({ verse }) => 
       khameneiText || undefined,
       almizanText || undefined,
       verseRef,
-      (chunk) => setInterpretation(chunk)
+      (chunk) => setInterpretation(prev => prev + chunk)
     )
       .then(() => {})
       .catch((error) => {

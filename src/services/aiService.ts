@@ -124,7 +124,7 @@ ${prompt}
             const content = parsed.choices?.[0]?.delta?.content;
             if (content) {
               result += content;
-              onChunk?.(result);
+              onChunk?.(content);
             }
           } catch (e) {
             // Ignore parsing errors for incomplete chunks
