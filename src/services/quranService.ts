@@ -1,5 +1,5 @@
 
-import { getPageMeta } from 'quran-meta';
+import { getPageMeta, findJuzByAyahId } from 'quran-meta';
 import type { QuranData, PageData, Verse } from '../types';
 
 const CACHE_DURATION_MS = 60 * 24 * 60 * 1000;
@@ -45,17 +45,48 @@ export function getPage(pageNumber: number): PageData | null {
     return null;
   }
 
-  // Cast to any to bypass type mismatch with the external library
-  const pageMeta = getPageMeta(pageNumber as any) as any;
+  // The type 'Page' from the library is a number literal from 1 to 604.
+  const pageMetaInfo = getPageMeta(pageNumber as any);
 
   const verses = quranData.filter((verse: Verse) => {
-    return verse.id >= pageMeta.firstAyahId && verse.id <= pageMeta.lastAyahId;
+    return verse.id >= pageMetaInfo.firstAyahId && verse.id <= pageMetaInfo.lastAyahId;
   });
+
+  if (verses.length === 0) {
+    // Handle cases with no verses on a page if necessary, though unlikely for Quran pages.
+    return {
+        page: pageNumber,
+        totalPages: TOTAL_PAGES,
+        verses: [],
+        meta: {
+            page: pageNumber,
+            surah: 0,
+            ayah: 0,
+            firstAyahId: 0,
+            lastAyahId: 0,
+            juz: [],
+        }
+    };
+  }
+
+  const firstAyahId = pageMetaInfo.firstAyahId;
+  
+  // Use the official quran-meta functions to get juz information
+  const juzNumber = findJuzByAyahId(firstAyahId);
+
+  const firstVerse = verses[0];
 
   return {
     page: pageNumber,
     totalPages: TOTAL_PAGES,
     verses: verses,
-    meta: pageMeta
+    meta: {
+      page: pageNumber,
+      surah: firstVerse.surah.number,
+      ayah: firstVerse.ayah,
+      firstAyahId: pageMetaInfo.firstAyahId,
+      lastAyahId: pageMetaInfo.lastAyahId,
+      juz: [juzNumber]
+    }
   };
 }

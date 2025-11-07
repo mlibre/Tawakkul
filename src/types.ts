@@ -6,14 +6,13 @@ export interface Surah {
   farsi: string;
 }
 
-export type TranslationKey = 'farsi_makarem' | 'english_arberry' | 'farsi_ansarian' | 'farsi_fooladvand' | 'farsi_mojtabavi';
+export type TranslationKey = 'farsi_makarem';
 
 // Fix: Moved Theme type here to be globally accessible.
 export type Theme = 'light' | 'dark';
 
 export interface VerseDetails {
   farsi_makarem: string;
-  english_arberry: string;
   farsi_ansarian: string;
   farsi_fooladvand: string;
   farsi_mojtabavi: string;
@@ -37,6 +36,7 @@ export interface PageMeta {
     ayah: number;
     firstAyahId: number;
     lastAyahId: number;
+    juz: number[];
 }
 
 export interface PageData {

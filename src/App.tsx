@@ -96,16 +96,13 @@ function App(): React.ReactElement {
           <div className="flex flex-col md:flex-row gap-6">
             <div className="flex-1">
               <Header
-                currentPage={currentPage}
-                totalPages={TOTAL_PAGES}
-                translation={translation}
-                setTranslation={setTranslation}
+                pageData={pageData}
                 theme={theme}
                 setTheme={setTheme}
               />
               <main>
                 {pageData ? (
-                  <VerseList verses={pageData.verses} translationKey={translation} readAyahs={readAyahsSet} onToggleAyahRead={toggleAyahRead} />
+                  <VerseList verses={pageData.verses} translationKey="farsi_makarem" readAyahs={readAyahsSet} onToggleAyahRead={toggleAyahRead} />
                 ) : (
                   <div className="flex justify-center items-center h-96">
                       <p>درحال بارگذاری صفحه...</p>

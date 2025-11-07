@@ -1,23 +1,18 @@
 
 import React from 'react';
-import type { TranslationKey, Theme } from '../types';
+import type { Theme, PageData } from '../types';
 import { ThemeToggle } from './ThemeToggle';
 
 interface HeaderProps {
-  currentPage: number;
-  totalPages: number;
-  translation: TranslationKey;
-  setTranslation: (translation: TranslationKey) => void;
+  pageData: PageData | null;
   theme: Theme;
   setTheme: (theme: Theme) => void;
 }
 
-const translations: { key: TranslationKey; label: string }[] = [
-  { key: 'farsi_makarem', label: 'مکارم' },
-  { key: 'english_arberry', label: 'Arberry' },
-];
+export const Header: React.FC<HeaderProps> = ({ pageData, theme, setTheme }) => {
+  const surahName = pageData?.verses[0]?.surah.farsi || '...';
+  const juz = pageData?.meta?.juz?.[0] || '...';
 
-export const Header: React.FC<HeaderProps> = ({ currentPage, totalPages, translation, setTranslation, theme, setTheme }) => {
   return (
     <header className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-lg rounded-2xl shadow-lg p-4 sm:p-6 mb-6 text-center border border-white/30 dark:border-slate-700/50">
       <div className="flex justify-between items-center mb-4">
@@ -27,20 +22,10 @@ export const Header: React.FC<HeaderProps> = ({ currentPage, totalPages, transla
         </h1>
         <div className="w-10"></div>
       </div>
-      <div className="flex flex-wrap gap-2 justify-center">
-        {translations.map(({ key, label }) => (
-          <button
-            key={key}
-            onClick={() => setTranslation(key)}
-            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-300 transform
-              ${translation === key
-                ? 'bg-purple-600 text-white shadow-md scale-105'
-                : 'bg-slate-200/80 dark:bg-slate-700/80 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600'
-              }`}
-          >
-            {label}
-          </button>
-        ))}
+      <div className="flex justify-around items-center text-sm text-slate-600 dark:text-slate-400">
+        <span>ترجمه: مکارم</span>
+        <span>سوره: {surahName}</span>
+        <span>جزء: {juz}</span>
       </div>
     </header>
   );
