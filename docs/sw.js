@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tawakkul-cache-v2';
+const CACHE_NAME = 'tawakkul-cache-v3';
 const coreAssets = [
   '/',
   '/index.html',
@@ -39,11 +39,15 @@ const assetsToCache = [...coreAssets, ...interpretationAssets];
 self.addEventListener('install', (event) => {
   console.log('Service worker: install event in progress.');
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => {
-        console.log('Service worker: caching app shell');
-        return cache.addAll(assetsToCache);
-      })
+    caches.open(CACHE_NAME).then((cache) => {
+      console.log('Service worker: caching app shell (flexible strategy)');
+      const cachePromises = assetsToCache.map((asset) => {
+        return cache.add(asset).catch((err) => {
+          console.warn(`Service worker: failed to cache ${asset}`, err);
+        });
+      });
+      return Promise.all(cachePromises);
+    })
       .then(() => {
         console.log('Service worker: install completed');
         self.skipWaiting();
