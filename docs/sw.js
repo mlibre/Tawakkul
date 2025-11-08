@@ -1,13 +1,39 @@
-const CACHE_NAME = 'tawakkul-cache-v1';
-const assetsToCache = [
+const CACHE_NAME = 'tawakkul-cache-v2';
+const coreAssets = [
   '/',
   '/index.html',
   '/manifest.json',
   '/fonts.css',
   '/quran.json',
   '/fav.png',
-  '/sources/sources.json'
+  '/sources.txt',
+  '/sources/ar-simple-clean.json',
+  '/sources/ar-simple-enhanced.json',
+  '/sources/en.arberry.json',
+  '/sources/surahs_names.json',
+  '/fonts/AlBayan.ttf',
+  '/fonts/amiri-bold.ttf',
+  '/fonts/amiri-bold.woff2',
+  '/fonts/amiri-regular.ttf',
+  '/fonts/amiri-regular.woff2',
+  '/fonts/Hafs.ttf',
+  '/fonts/vazirmatn-bold.woff2',
+  '/fonts/vazirmatn-light.woff2',
+  '/fonts/vazirmatn-medium.ttf',
+  '/fonts/vazirmatn-medium.woff2',
+  '/fonts/vazirmatn-regular.woff2',
+  '/fonts/vazirmatn-semibold.ttf',
+  '/fonts/vazirmatn-semibold.woff2',
+  '/fonts/Noto_Naskh_Arabic/NotoNaskhArabic-VariableFont_wght.ttf',
+  '/fonts/Noto_Naskh_Arabic/static/NotoNaskhArabic-Bold.ttf',
+  '/fonts/Noto_Naskh_Arabic/static/NotoNaskhArabic-Medium.ttf',
+  '/fonts/Noto_Naskh_Arabic/static/NotoNaskhArabic-Regular.ttf',
+  '/fonts/Noto_Naskh_Arabic/static/NotoNaskhArabic-SemiBold.ttf'
 ];
+
+const interpretationAssets = Array.from({ length: 114 }, (_, i) => `/khamenei-interpretations/${i + 1}.json`);
+
+const assetsToCache = [...coreAssets, ...interpretationAssets];
 
 // Install event: cache the application shell
 self.addEventListener('install', (event) => {
