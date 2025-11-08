@@ -196,7 +196,7 @@ export const AIInterpretation: React.FC<AIInterpretationProps> = ({ verse }) => 
           <div className="mt-4 border-t border-slate-200 dark:border-slate-700 pt-4">
             <div className="mb-4">
               <h3 className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-3">
-                محتوی فیش های رهبری <a
+                فیش های رهبری <a
                   href={`https://farsi.khamenei.ir/newspart-index?sid=${surahNumber || 1}&npt=7&aya=${ayahNumber || 1}`}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -216,7 +216,7 @@ export const AIInterpretation: React.FC<AIInterpretationProps> = ({ verse }) => 
 
             <div>
               <h3 className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-3">
-                محتوی ترجمه تفسیر المیزان <a
+                ترجمه تفسیر المیزان <a
                   href={`https://quran.inoor.ir/fa/ayah/${surahNumber || 1}/${ayahNumber || 1}/commentary?book=121`}
                   target="_blank"
                   rel="noopener noreferrer"
