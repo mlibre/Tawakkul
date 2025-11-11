@@ -7,10 +7,9 @@ const coreAssets = [
   '/fav.png',
   '/assets/index-B2J_aR2Z.js',
   '/assets/index-D05GFMaw.css',
-  '/quran.json' 
+  '/quran.json'
 ];
 
-// Assets to be cached in the background
 const backgroundAssets = [
   '/sources.txt',
   '/sources/ar-simple-clean.json',
@@ -45,9 +44,8 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       console.log('Service worker: caching core assets and quran.json');
-      const essentialAssets = coreAssets;
       return Promise.all(
-        essentialAssets.map((asset) =>
+        coreAssets.map((asset) =>
           cache.add(asset).catch((err) => {
             console.warn(`Service worker: failed to cache ${asset}`, err);
           })
