@@ -31,9 +31,8 @@ function App(): React.ReactElement {
   useEffect(() => {
     async function loadInitialData() {
       try {
-        await initQuranData();
+        await initQuranData((progress) => setLoadingProgress(progress));
         setIsDataLoading(false);
-        setLoadingProgress(100);
       } catch (err) {
         console.error("Failed to load Quran data:", err);
         setError(err instanceof Error ? err.message : String(err));

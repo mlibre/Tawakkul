@@ -1,4 +1,3 @@
-
 import { getPageMeta, findJuzByAyahId } from 'quran-meta';
 import type { QuranData, PageData, Verse } from '../types';
 
@@ -7,10 +6,11 @@ const CACHE_DURATION_MS = 60 * 24 * 60 * 1000;
 let quranData: QuranData | null = null;
 const TOTAL_PAGES = 604;
 
-export async function initQuranData(): Promise<void> {
+export async function initQuranData(progressCallback?: (progress: number) => void): Promise<void> {
   if (quranData) {
     return;
   }
+  
   // Check for cached data in localStorage
   const cached = localStorage.getItem('quranData');
   const cachedTime = localStorage.getItem('quranDataTimestamp');
@@ -20,14 +20,28 @@ export async function initQuranData(): Promise<void> {
     return;
   }
   try {
+    if (progressCallback) {
+      progressCallback(10); // Indicate that we are starting the fetch
+    }
     const response = await fetch('quran.json');
     if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
     }
+    
+    if (progressCallback) {
+      progressCallback(50); // Indicate that the fetch is complete
+    }
     quranData = await response.json();
+    
+    if (progressCallback) {
+      progressCallback(90); // Indicate that we are processing the data
+    }
     // Store fetched data in localStorage with timestamp
     localStorage.setItem('quranData', JSON.stringify(quranData));
     localStorage.setItem('quranDataTimestamp', Date.now().toString());
+    if (progressCallback) {
+      progressCallback(100); // Indicate that we are done
+    }
   } catch (error) {
     console.error("Could not fetch Quran data:", error);
     throw error;
