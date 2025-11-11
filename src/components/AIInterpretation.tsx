@@ -44,6 +44,13 @@ export const AIInterpretation: React.FC<AIInterpretationProps> = ({ verse }) => 
               setAutoRequested(true);
             }
           }
+          else {
+            // No Khamenei interpretation available
+            if (!autoRequested) {
+              setInterpretation('منابع تفسیری برای این آیه در دسترس نیست. لطفاً فیش رهبری یا منابع دیگر اضافه کنید.');
+              setHasRequested(true);
+            }
+          }
         })
         .catch(error => {
           console.warn('Could not auto-load Khamenei interpretation:', error);

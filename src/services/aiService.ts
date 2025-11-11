@@ -51,20 +51,20 @@ export async function getAIInterpretation(
   const [surah, ayah] = verseRef ? verseRef.split(':') : [];
 
   let content = `
-<quran-verse${surah ? ` surah="${surah}"` : ''}${ayah ? ` ayah="${ayah}"` : ''}>
+<QURAN-VERSE${surah ? ` surah="${surah}"` : ''}${ayah ? ` ayah="${ayah}"` : ''}>
 ${verseText}
-</quran-verse>
+</QURAN-VERSE>
 `;
 
   if (localKhameneiText) {
     content += `
-<interpretation author="Ayatollah Seyyed Ali Khamenei">\n${localKhameneiText}\n</interpretation>
+<INTERPRETATION author="Ayatollah Seyyed Ali Khamenei">\n${localKhameneiText}\n</INTERPRETATION>
 `;
   }
 
   if (almizanText) {
     content += `
-<interpretation author="Allameh Mohammad Hossein Tabatabaei">\n${almizanText}\n</interpretation>
+<INTERPRETATION author="Allameh Mohammad Hossein Tabatabaei">\n${almizanText}\n</INTERPRETATION>
 `;
   }
 
@@ -89,7 +89,7 @@ ${prompt}
             content: content
           }
         ],
-        temperature: 0.1,
+        temperature: 0,
         stream: true
       })
     });
