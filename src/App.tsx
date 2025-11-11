@@ -1,5 +1,5 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
+import { LoadingProgressBar } from './components/LoadingProgressBar';
 import { getPage, initQuranData } from './services/quranService';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { useTheme } from './hooks/useTheme';
@@ -9,18 +9,19 @@ import { Pagination } from './components/Pagination';
 import { ProgressBar } from './components/ProgressBar';
 import { LoadingSpinner } from './components/LoadingSpinner';
 import { SourcesModal } from './components/SourcesModal';
-import type { PageData, TranslationKey } from './types';
+import type { PageData } from './types';
 
 const TOTAL_PAGES = 604;
 
 function App(): React.ReactElement {
   const [theme, setTheme] = useTheme();
   const [isDataLoading, setIsDataLoading] = useState(true);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [error, setError] = useState<string | null>(null);
   const [pageData, setPageData] = useState<PageData | null>(null);
   const [isSourcesModalOpen, setIsSourcesModalOpen] = useState(false);
 
   const [currentPage, setCurrentPage] = useLocalStorage<number>('currentPage', 1);
-  const [translation, setTranslation] = useLocalStorage<TranslationKey>('translation', 'farsi_makarem');
   const [readPages, setReadPages] = useLocalStorage<number[]>('readPages', []);
   const [readAyahs, setReadAyahs] = useLocalStorage<number[]>('readAyahs', []);
 
@@ -32,9 +33,11 @@ function App(): React.ReactElement {
       try {
         await initQuranData();
         setIsDataLoading(false);
-      } catch (error) {
-        console.error("Failed to load Quran data:", error);
-        // Handle error state in UI
+        setLoadingProgress(100);
+      } catch (err) {
+        console.error("Failed to load Quran data:", err);
+        setError(err instanceof Error ? err.message : String(err));
+        setIsDataLoading(false);
       }
     }
     loadInitialData();
@@ -86,7 +89,23 @@ function App(): React.ReactElement {
   }, [readAyahsSet, setReadAyahs, pageData, currentPage, readPagesSet, setReadPages]);
 
   if (isDataLoading) {
-    return <LoadingSpinner />;
+    return (
+      <>
+        <LoadingProgressBar progress={loadingProgress} />
+        <LoadingSpinner />
+      </>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
+        <div className="p-4 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 rounded-md shadow-md">
+          <p className="font-semibold">Error loading Quran data:</p>
+          <p>{error}</p>
+        </div>
+      </div>
+    );
   }
 
   return (
