@@ -1,11 +1,17 @@
-const CACHE_NAME = 'tawakkul-cache-v3';
+const CACHE_NAME = 'tawakkul-cache-v4';
 const coreAssets = [
   '/',
   '/index.html',
   '/manifest.json',
   '/fonts.css',
-  '/quran.json',
   '/fav.png',
+  '/assets/index-B2J_aR2Z.js',
+  '/assets/index-D05GFMaw.css',
+  '/quran.json' 
+];
+
+// Assets to be cached in the background
+const backgroundAssets = [
   '/sources.txt',
   '/sources/ar-simple-clean.json',
   '/sources/ar-simple-enhanced.json',
@@ -28,30 +34,38 @@ const coreAssets = [
   '/fonts/Noto_Naskh_Arabic/static/NotoNaskhArabic-Bold.ttf',
   '/fonts/Noto_Naskh_Arabic/static/NotoNaskhArabic-Medium.ttf',
   '/fonts/Noto_Naskh_Arabic/static/NotoNaskhArabic-Regular.ttf',
-  '/fonts/Noto_Naskh_Arabic/static/NotoNaskhArabic-SemiBold.ttf'
+  '/fonts/Noto_Naskh_Arabic/static/NotoNaskhArabic-SemiBold.ttf',
+  ...Array.from({ length: 114 }, (_, i) => `/khamenei-interpretations/${i + 1}.json`)
 ];
 
-const interpretationAssets = Array.from({ length: 114 }, (_, i) => `/khamenei-interpretations/${i + 1}.json`);
-
-const assetsToCache = [...coreAssets, ...interpretationAssets];
 
 // Install event: cache the application shell
 self.addEventListener('install', (event) => {
   console.log('Service worker: install event in progress.');
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('Service worker: caching app shell (flexible strategy)');
-      const cachePromises = assetsToCache.map((asset) => {
-        return cache.add(asset).catch((err) => {
-          console.warn(`Service worker: failed to cache ${asset}`, err);
+      console.log('Service worker: caching core assets and quran.json');
+      const essentialAssets = coreAssets;
+      return Promise.all(
+        essentialAssets.map((asset) =>
+          cache.add(asset).catch((err) => {
+            console.warn(`Service worker: failed to cache ${asset}`, err);
+          })
+        )
+      );
+    }).then(() => {
+      console.log('Service worker: core assets cached.');
+      // Don't block installation for background assets
+      caches.open(CACHE_NAME).then((cache) => {
+        console.log('Service worker: caching background assets.');
+        backgroundAssets.forEach((asset) => {
+          cache.add(asset).catch((err) => {
+            console.warn(`Service worker: failed to cache background asset ${asset}`, err);
+          });
         });
       });
-      return Promise.all(cachePromises);
+      self.skipWaiting();
     })
-      .then(() => {
-        console.log('Service worker: install completed');
-        self.skipWaiting();
-      })
   );
 });
 
