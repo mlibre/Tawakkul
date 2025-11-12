@@ -5,8 +5,8 @@ const coreAssets = [
   '/manifest.json',
   '/fonts.css',
   '/fav.png',
-  '/assets/index-B2J_aR2Z.js',
-  '/assets/index-D05GFMaw.css',
+  '/assets/index.js',
+  '/assets/index.css',
   '/quran.json'
 ];
 
