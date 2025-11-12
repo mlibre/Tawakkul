@@ -57,33 +57,11 @@ npm run build
 
 فایل‌های ساخته شده در دایرکتوری `docs/` قرار خواهند گرفت و آماده استقرار هستند.
 
-## ساختار پروژه
-
-```text
-tawakkul/
-├── components/          # کامپوننت‌های React
-│   ├── Header.tsx      # هدر برنامه با تغییر تم
-│   ├── VerseList.tsx   # نمایش آیات قرآن
-│   ├── Pagination.tsx  # ناوبری صفحات
-│   ├── ProgressBar.tsx # پیشرفت قرائت
-│   └── SourcesModal.tsx # مدال اطلاعات منابع
-├── hooks/              # هوک‌های سفارشی React
-│   ├── useLocalStorage.ts
-│   └── useTheme.ts
-├── services/           # سرویس‌های داده
-│   └── quranService.ts # مدیریت داده‌های قرآن
-├── public/             # دارایی‌های ایستا
-│   ├── quran.json      # داده‌های قرآن
-│   └── sources.txt     # انتساب منابع
-├── types.ts            # تعریف‌های نوع TypeScript
-└── App.tsx             # کامپوننت برنامه اصلی
-```
-
 ## منابع داده
 
 این برنامه از منابع مختلف برای متن قرآن و ترجمه‌ها استفاده می‌کند:
 
-- **متن قرآن**: متن عربی با استایل پیشرفته
+- **متن قرآن**: [متن عربی با استایل پیشرفته](https://globalquran.com)
 - **ترجمه‌های فارسی**: [ترجمه مکارم شیرازی](https://quran.makarem.ir)
 - **منابع خارجی**:
   - [تفسیر نمونه](https://quran.makarem.ir/fa/interpretation)
