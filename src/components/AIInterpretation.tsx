@@ -22,7 +22,7 @@ export const AIInterpretation: React.FC<AIInterpretationProps> = ({ verse }) => 
   const { verse: verseData, surah, ayah } = verse;
   const surahNumber = surah.number;
   const ayahNumber = ayah;
-  const verseText = verseData.arabic_enhanced;
+  const verseText = verseData.ar;
 
   useEffect(() => {
     setInterpretation('');

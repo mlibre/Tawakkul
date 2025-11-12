@@ -8,7 +8,7 @@ interface SourcesModalProps {
 
 const sourcesContent = `* ترجمه ی مکارم شیراری - https://quran.makarem.ir
 * متن عربی ساده: https://api.globalquran.com/complete/ar-simple-clean.json
-* متن عربی با عراب: https://api.globalquran.com/complete/ar-simple-enhanced.json
+* متن عربی با اعراب: https://api.globalquran.com/complete/ar-simple-enhanced.json
 
 * نام سوره ها به انگلیسی: https://en.wikipedia.org/wiki/List_of_chapters_in_the_Quran
 * نام سوره ها به فارسی: https://fa.wikipedia.org/wiki/%D9%81%D9%87%D8%B1%D8%B3%D8%AA_%D8%B3%D9%88%D8%B1%D9%87%E2%80%8C%D9%87%D8%A7%DB%8C_%D9%82%D8%B1%D8%A2%D9%86

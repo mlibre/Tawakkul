@@ -13,7 +13,7 @@ export type Theme = 'light' | 'dark';
 
 export interface VerseDetails {
   farsi_makarem: string;
-  arabic_enhanced: string;
+  ar: string;
 }
 
 export interface Verse {
