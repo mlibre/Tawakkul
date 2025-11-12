@@ -14,7 +14,6 @@ const backgroundAssets = [
   '/sources.txt',
   '/sources/ar-simple-clean.json',
   '/sources/ar-simple-enhanced.json',
-  '/sources/en.arberry.json',
   '/sources/surahs_names.json',
   '/fonts/AlBayan.ttf',
   '/fonts/amiri-bold.ttf',

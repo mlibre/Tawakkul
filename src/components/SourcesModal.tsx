@@ -7,7 +7,6 @@ interface SourcesModalProps {
 }
 
 const sourcesContent = `* ترجمه ی مکارم شیراری - https://quran.makarem.ir
-* ترجمه اربری - en.arberry: https://api.globalquran.com/complete/en.arberry.json
 * متن عربی ساده - ar-simple-clean: https://api.globalquran.com/complete/ar-simple-clean.json
 * متن عربی با عراب - ar-simple-enhanced: https://api.globalquran.com/complete/ar-simple-enhanced.json
 

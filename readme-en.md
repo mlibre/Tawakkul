@@ -9,7 +9,7 @@ A serene web application for daily Quran reading. The app embraces the "one page
 ## Key Features
 
 - 📖 One page a day reading experience (authentic Mushaf pages)
-- 🇮🇷 Persian translations (Makarem, Arberry)
+- 🇮🇷 Persian translations (Makarem)
 - ✅ Manual read/unread marking for verses and pages
 - 📊 Progress visualization (pages read out of 604)
 - 💾 localStorage persistence (survives browser sessions)
@@ -94,7 +94,6 @@ The application uses various sources for Quran text and translations:
 
 - **Quran Text**: Arabic text with enhanced styling
 - **Persian Translations**: [Makarem Shirazi translation](https://quran.makarem.ir)
-- **English Translation**: [A.J. Arberry translation](https://api.globalquran.com/complete/en.arberry.json)
 - **External Resources**:
   - [Tafsir Nemooneh](https://quran.makarem.ir/fa/interpretation)
   - [Khamenei insights](https://farsi.khamenei.ir)
