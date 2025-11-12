@@ -12,8 +12,6 @@ const coreAssets = [
 
 const backgroundAssets = [
   '/sources.txt',
-  '/sources/ar-simple-clean.json',
-  '/sources/ar-simple-enhanced.json',
   '/fonts/AlBayan.ttf',
   '/fonts/amiri-bold.ttf',
   '/fonts/amiri-bold.woff2',
