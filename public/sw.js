@@ -12,12 +12,6 @@ const coreAssets = [
 
 const backgroundAssets = [
   '/sources.txt',
-  '/fonts/AlBayan.ttf',
-  '/fonts/amiri-bold.ttf',
-  '/fonts/amiri-bold.woff2',
-  '/fonts/amiri-regular.ttf',
-  '/fonts/amiri-regular.woff2',
-  '/fonts/Hafs.ttf',
   '/fonts/vazirmatn-bold.woff2',
   '/fonts/vazirmatn-light.woff2',
   '/fonts/vazirmatn-medium.ttf',

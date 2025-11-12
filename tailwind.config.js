@@ -9,7 +9,7 @@ export default {
 	  extend: {
 		 fontFamily: {
 			persian: ['Vazirmatn', 'sans-serif'],
-			arabic: ['Amiri', 'serif'],
+			arabic: ['NotoNaskhArabic', 'serif'],
 		 },
 	  },
 	},

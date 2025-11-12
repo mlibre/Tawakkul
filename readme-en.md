@@ -61,7 +61,7 @@ The built files will be in the `docs/` directory, ready for deployment.
 ## Architecture
 
 - **Frontend**: React 18 with TypeScript
-- **Styling**: Tailwind CSS with custom Persian fonts (Vazirmatn, Amiri)
+- **Styling**: Tailwind CSS with custom Persian fonts (Vazirmatn)
 - **State Management**: React hooks with localStorage persistence
 - **Build Tool**: Vite
 - **Deployment**: GitHub Pages (configured for `/Tawakkul/` base path)
