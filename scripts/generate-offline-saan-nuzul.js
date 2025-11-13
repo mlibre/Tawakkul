@@ -1,14 +1,17 @@
 import fs from 'fs';
-import path from 'path';
 import { JSDOM } from 'jsdom';
 import axios from 'axios';
 
 // Configuration
 const OUTPUT_FILE = 'public/saan-nuzul.json';
-const SURAH_FOLDER = 'public/saan-nuzul';
 const DELAY_MS = 3000; // Delay between requests to avoid rate limiting
 const MAX_RETRIES = 3;
 const CONCURRENT_REQUESTS = 20; // Number of parallel requests (lower for Iranian sites)
+
+// Surah name mapping for URLs (when website uses different Persian names)
+const SURAH_NAME_URL_MAP = {
+  'سجده': 'سجدة'  // سجده -> سجدة (website uses سجدة with ت)
+};
 
 // Load Quran data to get accurate verse counts
 let quranData = [];
@@ -96,7 +99,10 @@ async function fetchSaanNuzulData(verseRef, retryCount = 0) {
     // Use the Persian farsi name directly (no conversion needed)
     const surahFarsiName = verse.surah.farsi;
     
-    const url = `https://wiki.ahlolbait.com/آیه_${ayah}_سوره_${surahFarsiName}`;
+    // Apply URL mapping if needed
+    const urlFarsiName = SURAH_NAME_URL_MAP[surahFarsiName] || surahFarsiName;
+    
+    const url = `https://wiki.ahlolbait.com/آیه_${ayah}_سوره_${urlFarsiName}`;
     console.log(`Fetching: ${verseRef} - ${url}`);
 
     const htmlString = await fetchSaanNuzulHtml(url);
@@ -202,51 +208,9 @@ async function generateOfflineSaanNuzulData() {
 
   console.log(`Filtered from ${Object.keys(saanNuzulData).length} to ${Object.keys(filteredSaanNuzulData).length} entries with actual content`);
 
-  // Create per-surah JSON files
-  await createSurahFiles(filteredSaanNuzulData);
-}
-
-// Create individual JSON files for each surah
-async function createSurahFiles(saanNuzulData) {
-  console.log('Creating per-surah JSON files...');
-
-  // Ensure the folder exists
-  if (!fs.existsSync(SURAH_FOLDER)) {
-    fs.mkdirSync(SURAH_FOLDER, { recursive: true });
-  }
-
-  // Group Saan Nuzul data by surah
-  const surahSaanNuzul = {};
-
-  Object.entries(saanNuzulData).forEach(([verseRef, saanNuzul]) => {
-    const [surahNum] = verseRef.split(':').map(Number);
-    if (!surahSaanNuzul[surahNum]) {
-      surahSaanNuzul[surahNum] = {};
-    }
-    surahSaanNuzul[surahNum][verseRef] = saanNuzul;
-  });
-
-  // Create a JSON file for each surah
-  for (const [surahNum, surahData] of Object.entries(surahSaanNuzul)) {
-    const filePath = path.join(SURAH_FOLDER, `${surahNum}.json`);
-    
-    // Sort the verses by ayah number to maintain proper order
-    const sortedSurahData = {};
-    Object.keys(surahData)
-      .sort((a, b) => {
-        const [, ayahA] = a.split(':').map(Number);
-        const [, ayahB] = b.split(':').map(Number);
-        return ayahA - ayahB;
-      })
-      .forEach(verseRef => {
-        sortedSurahData[verseRef] = surahData[verseRef];
-      });
-    
-    fs.writeFileSync(filePath, JSON.stringify(sortedSurahData, null, 2));
-    console.log(`Created ${filePath} with ${Object.keys(surahData).length} verses with content`);
-  }
-
-  console.log(`Created ${Object.keys(surahSaanNuzul).length} surah files`);
+  // Save final filtered data to OUTPUT_FILE
+  fs.writeFileSync(OUTPUT_FILE, JSON.stringify(filteredSaanNuzulData, null, 2));
+  console.log(`Final data saved to ${OUTPUT_FILE} with ${Object.keys(filteredSaanNuzulData).length} entries`);
 }
 
 // Run the script
