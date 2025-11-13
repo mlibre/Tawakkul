@@ -1,3 +1,9 @@
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import ReactMarkdown from 'react-markdown';
+import { getAIInterpretation } from '../services/aiService';
+import { DEFAULT_AI_PROMPT } from '../config';
+import type { Verse } from '../types';
+
 // Surah name mapping for URLs (when website uses different Persian names)
 const SURAH_NAME_URL_MAP: Record<string, string> = {
   'سجده': 'سجدة',     // سجده -> سجدة (website uses سجدة with ت)
@@ -5,19 +11,15 @@ const SURAH_NAME_URL_MAP: Record<string, string> = {
   'انشراح': 'شرح'     // انشراح -> شرح (website uses shorter form)
 };
 
-// Global cache to prevent duplicate requests
-const globalSourceCache = new Map<string, {khamenei: string, saan: string}>();
 
-// Function to get the correct URL version of surah name
 function getSurahNameForUrl(surahName: string): string {
   return SURAH_NAME_URL_MAP[surahName] || surahName;
 }
 
-import React, { useState, useEffect, useCallback } from 'react';
-import ReactMarkdown from 'react-markdown';
-import { getAIInterpretation } from '../services/aiService';
-import { DEFAULT_AI_PROMPT } from '../config';
-import type { Verse } from '../types';
+// Global cache to prevent duplicate requests
+const globalSourceCache = new Map<string, { khamenei: string; saan: string }>();
+// Global map of in-flight requests to deduplicate simultaneous loads for the same verse
+const inFlightRequests = new Map<string, Promise<{ khamenei: string; saan: string }>>();
 
 interface AIInterpretationProps {
   verse: Verse;
@@ -34,128 +36,133 @@ export const AIInterpretation: React.FC<AIInterpretationProps> = ({ verse }) => 
   const [hasRequested, setHasRequested] = useState(false);
   const [showSources, setShowSources] = useState(false);
 
+  // track per-source loaded state so effects can respond reliably
+  const [sourcesLoaded, setSourcesLoaded] = useState<{ khamenei: boolean; saan: boolean; complete: boolean }>({
+    khamenei: false,
+    saan: false,
+    complete: false
+  });
+
+  const autoTriggered = useRef<boolean>(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
+
   const { verse: verseData, surah, ayah } = verse;
   const surahNumber = surah.number;
   const ayahNumber = ayah;
   const verseText = verseData.ar;
 
-  // Refs to track state and prevent loops
-  const loadingSources = React.useRef<string | null>(null);
-  const sourcesLoaded = React.useRef<boolean>(false);
-  const autoTriggered = React.useRef<boolean>(false);
-
-  // Function to load sources for a verse with proper debouncing
-  const loadSources = useCallback(async (verseRef: string, surahNum: number) => {
-    // Prevent duplicate loading for the same verse
-    if (loadingSources.current === verseRef) {
-      return;
-    }
-
-    // Check global cache first
+  // Load sources for a verse with deduplication and abort support
+  const loadSources = useCallback((verseRef: string, surahNum: number) => {
+    // If cached, apply and return resolved promise
     if (globalSourceCache.has(verseRef)) {
       const cached = globalSourceCache.get(verseRef)!;
       setKhameneiText(cached.khamenei);
       setSaanNuzulText(cached.saan);
-      
-      // Mark as sources loaded for cache
-      sourcesLoaded.current = true;
-      return;
+      setSourcesLoaded({ khamenei: !!cached.khamenei, saan: !!cached.saan, complete: true });
+      return Promise.resolve({ khamenei: cached.khamenei, saan: cached.saan });
     }
 
-    // Mark as loading
-    loadingSources.current = verseRef;
+    // If there's already an in-flight request for this verse, reuse it
+    if (inFlightRequests.has(verseRef)) {
+      return inFlightRequests.get(verseRef)!;
+    }
 
-    // Load both sources in parallel
-    const promises = [];
+    // create an abort controller for this load
+    const controller = new AbortController();
+    const { signal } = controller;
+    abortControllerRef.current = controller;
 
-    // Load Khamenei interpretation
-    promises.push(
-      fetch(`khamenei-interpretations/${surahNum}.json`)
-        .then(response => response.ok ? response.json() : null)
-        .then(data => {
-          if (data && data[verseRef]?.content) {
-            return data[verseRef].content;
-          }
-          return '';
-        })
-        .catch(() => '')
-    );
+    const promise = new Promise<{ khamenei: string; saan: string }>(async (resolve) => {
+      try {
+        // Fetch both in parallel. We use allSettled to be explicit about partial failures.
+        const khameneiFetch = fetch(`khamenei-interpretations/${surahNum}.json`, { signal })
+          .then((r) => (r.ok ? r.json() : null))
+          .then((data) => (data && data[verseRef]?.content ? data[verseRef].content : ''))
+          .catch(() => '');
 
-    // Load Saan Nuzul
-    promises.push(
-      fetch('saan-nuzul.json')
-        .then(response => response.ok ? response.json() : null)
-        .then(data => {
-          if (data && data[verseRef]?.content) {
-            return data[verseRef].content;
-          }
-          return '';
-        })
-        .catch(() => '')
-    );
+        const saanFetch = fetch('saan-nuzul.json', { signal })
+          .then((r) => (r.ok ? r.json() : null))
+          .then((data) => (data && data[verseRef]?.content ? data[verseRef].content : ''))
+          .catch(() => '');
 
-    // Wait for both to complete
-    Promise.all(promises).then(([khameneiContent, saanContent]) => {
-      if (khameneiContent) {
-        setKhameneiText(khameneiContent);
+        const [khameneiContent, saanContent] = await Promise.all([khameneiFetch, saanFetch]);
+
+        // Apply results
+        if (khameneiContent) setKhameneiText(khameneiContent);
+        if (saanContent) setSaanNuzulText(saanContent);
+
+        setSourcesLoaded({ khamenei: Boolean(khameneiContent), saan: Boolean(saanContent), complete: true });
+
+        // cache
+        globalSourceCache.set(verseRef, { khamenei: khameneiContent, saan: saanContent });
+
+        resolve({ khamenei: khameneiContent, saan: saanContent });
+      } catch (err) {
+        // If fetch was aborted, just resolve with empty strings
+        resolve({ khamenei: '', saan: '' });
+      } finally {
+        // cleanup in-flight map
+        inFlightRequests.delete(verseRef);
+        // clear controller if it's the same one
+        if (abortControllerRef.current === controller) {
+          abortControllerRef.current = null;
+        }
       }
-      if (saanContent) {
-        setSaanNuzulText(saanContent);
-      }
-
-      // Mark that sources have been loaded for this verse
-      sourcesLoaded.current = true;
-
-      // Update global cache
-      globalSourceCache.set(verseRef, {
-        khamenei: khameneiContent,
-        saan: saanContent
-      });
-    }).finally(() => {
-      // Clear loading flag
-      loadingSources.current = null;
     });
+
+    inFlightRequests.set(verseRef, promise);
+    return promise;
   }, []);
 
   useEffect(() => {
     const verseKey = `${surahNumber}:${ayahNumber}`;
-    
-    // Reset interpretation state when verse changes
+
+    // Reset interpretation and related UI when verse changes
     setInterpretation('');
     setHasRequested(false);
     setAlmizanText('');
-    
-    // Reset tracking for new verse
-    sourcesLoaded.current = false;
+    setKhameneiText('');
+    setSaanNuzulText('');
+
+    setSourcesLoaded({ khamenei: false, saan: false, complete: false });
     autoTriggered.current = false;
-    
-    // Load sources with a proper debounce to prevent multiple rapid calls
+
+    // Abort any in-flight fetch for previous verse
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+
     if (surahNumber && ayahNumber) {
       const timeoutId = setTimeout(() => {
         loadSources(verseKey, surahNumber);
       }, 150);
 
-      return () => clearTimeout(timeoutId);
+      return () => {
+        clearTimeout(timeoutId);
+        // Abort the load initiated by this effect if still running
+        if (abortControllerRef.current) {
+          abortControllerRef.current.abort();
+          abortControllerRef.current = null;
+        }
+      };
     }
+
+    return undefined;
   }, [verse.id, loadSources, surahNumber, ayahNumber]);
 
-  // Auto-trigger AI only once when sources are first loaded
+  // Auto-trigger AI only once when sources are completely loaded
   useEffect(() => {
-    // Only trigger if:
-    // 1. We haven't auto-triggered yet
-    // 2. We haven't manually requested yet
-    // 3. Sources are loaded for the first time
-    // 4. We actually have some source content
-    
-    if (!autoTriggered.current &&
-        !hasRequested &&
-        sourcesLoaded.current &&
-        (khameneiText || saanNuzulText)) {
-      
+    if (
+      !autoTriggered.current &&
+      !hasRequested &&
+      sourcesLoaded.complete &&
+      (khameneiText || saanNuzulText)
+    ) {
       autoTriggered.current = true;
       handleRequestInterpretation();
     }
-  }, [khameneiText, saanNuzulText, hasRequested]);
+  }, [khameneiText, saanNuzulText, hasRequested, sourcesLoaded.complete]);
 
   const handleRequestInterpretation = () => {
     setIsLoading(true);
@@ -171,7 +178,7 @@ export const AIInterpretation: React.FC<AIInterpretationProps> = ({ verse }) => 
       almizanText || undefined,
       saanNuzulText || undefined,
       verseRef,
-      (chunk: string) => setInterpretation(prev => prev + chunk)
+      (chunk: string) => setInterpretation((prev) => prev + chunk)
     )
       .then(() => {})
       .catch((error) => {
@@ -194,7 +201,7 @@ export const AIInterpretation: React.FC<AIInterpretationProps> = ({ verse }) => 
       almizanText || undefined,
       saanNuzulText || undefined,
       verseRef,
-      (chunk: string) => setInterpretation(prev => prev + chunk)
+      (chunk: string) => setInterpretation((prev) => prev + chunk)
     )
       .then(() => {})
       .catch((error) => {
@@ -209,9 +216,7 @@ export const AIInterpretation: React.FC<AIInterpretationProps> = ({ verse }) => 
       {/* AI Interpretation Box */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-medium text-slate-600 dark:text-slate-400">
-            تفسیر هوش مصنوعی
-          </h3>
+          <h3 className="text-sm font-medium text-slate-600 dark:text-slate-400">تفسیر هوش مصنوعی</h3>
           <div className="flex gap-2">
             {!hasRequested && (
               <button
@@ -227,7 +232,9 @@ export const AIInterpretation: React.FC<AIInterpretationProps> = ({ verse }) => 
                 <button
                   onClick={handleRegenerate}
                   disabled={isLoading}
-                  className={`text-xs text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 underline disabled:opacity-50 ${isLoading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                  className={`text-xs text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 underline disabled:opacity-50 ${
+                    isLoading ? 'cursor-not-allowed' : 'cursor-pointer'
+                  }`}
                 >
                   {isLoading ? 'در حال تولید...' : 'تولید مجدد'}
                 </button>
@@ -285,7 +292,7 @@ export const AIInterpretation: React.FC<AIInterpretationProps> = ({ verse }) => 
               </div>
             )}
             {interpretation && isLoading && (
-              <span className="inline-block w-2 h-4 bg-purple-600 animate-pulse ml-1"></span>
+              <span className="inline-block w-2 h-4 bg-purple-600 animate-pulse ml-1" />
             )}
           </div>
         </div>
