@@ -7,7 +7,7 @@ import axios from 'axios';
 const OUTPUT_FILE = 'public/saan-nuzul.json';
 const SURAH_FOLDER = 'public/saan-nuzul';
 const DELAY_MS = 3000; // Delay between requests to avoid rate limiting
-const MAX_RETRIES = 10;
+const MAX_RETRIES = 3;
 const CONCURRENT_REQUESTS = 20; // Number of parallel requests (lower for Iranian sites)
 
 // Load Quran data to get accurate verse counts
@@ -173,9 +173,17 @@ async function generateOfflineSaanNuzulData() {
     const successful = results.filter(result => result !== null);
 
     if (successful.length > 0) {
+      // Filter out entries with no content before saving to keep file size smaller
+      const filteredSaanNuzulData = {};
+      Object.entries(saanNuzulData).forEach(([verseRef, saanNuzul]) => {
+        if (saanNuzul.found && saanNuzul.content && saanNuzul.content.trim()) {
+          filteredSaanNuzulData[verseRef] = saanNuzul;
+        }
+      });
+      
       // Save progress after each batch
-      fs.writeFileSync(OUTPUT_FILE, JSON.stringify(saanNuzulData, null, 2));
-      console.log(`Batch completed: ${successful.length} successful, ${Object.keys(saanNuzulData).length} total Saan Nuzul entries saved`);
+      fs.writeFileSync(OUTPUT_FILE, JSON.stringify(filteredSaanNuzulData, null, 2));
+      console.log(`Batch completed: ${successful.length} successful, ${Object.keys(filteredSaanNuzulData).length} total Saan Nuzul entries with content saved`);
     }
 
     // Delay between batches to be respectful
@@ -184,10 +192,18 @@ async function generateOfflineSaanNuzulData() {
     }
   }
 
-  console.log(`Completed! Total Saan Nuzul entries: ${Object.keys(saanNuzulData).length}`);
+  // Filter out entries with no content before creating surah files to keep them smaller
+  const filteredSaanNuzulData = {};
+  Object.entries(saanNuzulData).forEach(([verseRef, saanNuzul]) => {
+    if (saanNuzul.found && saanNuzul.content && saanNuzul.content.trim()) {
+      filteredSaanNuzulData[verseRef] = saanNuzul;
+    }
+  });
+
+  console.log(`Filtered from ${Object.keys(saanNuzulData).length} to ${Object.keys(filteredSaanNuzulData).length} entries with actual content`);
 
   // Create per-surah JSON files
-  await createSurahFiles(saanNuzulData);
+  await createSurahFiles(filteredSaanNuzulData);
 }
 
 // Create individual JSON files for each surah
@@ -227,7 +243,7 @@ async function createSurahFiles(saanNuzulData) {
       });
     
     fs.writeFileSync(filePath, JSON.stringify(sortedSurahData, null, 2));
-    console.log(`Created ${filePath} with ${Object.keys(surahData).length} verses`);
+    console.log(`Created ${filePath} with ${Object.keys(surahData).length} verses with content`);
   }
 
   console.log(`Created ${Object.keys(surahSaanNuzul).length} surah files`);
