@@ -1,6 +1,6 @@
 export interface Surah {
   number: number;
-  persian_number: string;
+  pn: string;
   arabic: string;
   english: string;
   farsi: string;
@@ -21,7 +21,7 @@ export interface Verse {
   id_persian: string;
   surah: Surah;
   ayah: number;
-  ayah_persian: string;
+  ap: string;
   verse: VerseDetails;
 }
 

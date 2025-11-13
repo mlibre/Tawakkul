@@ -26,7 +26,7 @@ export const VerseList: React.FC<VerseListProps> = ({ verses, translationKey, re
             <p className="font-arabic text-2xl sm:text-3xl text-slate-900 dark:text-slate-100 text-right mb-4" style={{ fontSize: '2.1rem', lineHeight: '3.8rem' }}>
               {verse.verse.ar}
               <span className="text-lg font-persian text-purple-600 dark:text-purple-400 mx-2">
-                ({verse.ayah_persian})
+                ({verse.ap})
               </span>
             </p>
             <p className="font-persian text-base sm:text-lg text-slate-600 dark:text-slate-300 text-right" style={{ lineHeight: '2rem' }}>
@@ -35,7 +35,7 @@ export const VerseList: React.FC<VerseListProps> = ({ verses, translationKey, re
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-4 gap-2">
               <div className="flex items-center gap-2 flex-row sm:items-center">
                 <div className="mt-2 text-xs text-slate-400 dark:text-slate-500 text-right sm:text-left">
-                  سوره {verse.surah.farsi} - آیه {verse.ayah_persian}
+                  سوره {verse.surah.farsi} - آیه {verse.ap}
                 </div>
                 <button
                   onClick={() => onToggleAyahRead(verse.id)}
