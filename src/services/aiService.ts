@@ -77,29 +77,35 @@ export async function getAIInterpretation(
   // Build the content with verse and optional texts
   const [surah, ayah] = verseRef ? verseRef.split(':') : [];
 
-  let content = `
-<QURAN-VERSE${surah ? ` surah="${surah}"` : ''}${ayah ? ` ayah="${ayah}"` : ''}>
+  let content = `## Quran Verse${surah && ayah ? ` (${surah}:${ayah})` : ''}
+
 ${verseText}
-</QURAN-VERSE>
 `;
 
   if (localSaanNuzulText) {
     content += `
-<OCCASION-OF-REVELATION>
+
+### Occasion of Revelation
+
 ${localSaanNuzulText}
-</OCCASION-OF-REVELATION>
 `;
   }
 
   if (localKhameneiText) {
     content += `
-<INTERPRETATION author="Ayatollah Seyyed Ali Khamenei">\n${localKhameneiText}\n</INTERPRETATION>
+
+### Interpretation by Ayatollah Seyyed Ali Khamenei
+
+${localKhameneiText}
 `;
   }
 
   if (almizanText) {
     content += `
-<INTERPRETATION author="Allameh Mohammad Hossein Tabatabaei">\n${almizanText}\n</INTERPRETATION>
+
+### Interpretation by Allameh Mohammad Hossein Tabatabaee
+
+${almizanText}
 `;
   }
 
@@ -108,7 +114,7 @@ ${localSaanNuzulText}
 ${prompt}
 `;
 
-  console.log(content);
+  console.log("content: ", content);
 
   try {
     // Use OpenAI SDK for better handling
