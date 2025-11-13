@@ -4,12 +4,16 @@ const SURAH_NAME_URL_MAP: Record<string, string> = {
   'جاثیه': 'جاثية',   // جاثیه -> جاثية (website uses جاثية with ی)
   'انشراح': 'شرح'     // انشراح -> شرح (website uses shorter form)
 };
+
+// Global cache to prevent duplicate requests
+const globalSourceCache = new Map<string, {khamenei: string, saan: string}>();
+
 // Function to get the correct URL version of surah name
 function getSurahNameForUrl(surahName: string): string {
   return SURAH_NAME_URL_MAP[surahName] || surahName;
 }
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { getAIInterpretation } from '../services/aiService';
 import { DEFAULT_AI_PROMPT } from '../config';
@@ -28,7 +32,6 @@ export const AIInterpretation: React.FC<AIInterpretationProps> = ({ verse }) => 
   const [almizanText, setAlmizanText] = useState<string>('');
   const [saanNuzulText, setSaanNuzulText] = useState<string>('');
   const [hasRequested, setHasRequested] = useState(false);
-  const [autoRequested, setAutoRequested] = useState(false);
   const [showSources, setShowSources] = useState(false);
 
   const { verse: verseData, surah, ayah } = verse;
@@ -36,52 +39,93 @@ export const AIInterpretation: React.FC<AIInterpretationProps> = ({ verse }) => 
   const ayahNumber = ayah;
   const verseText = verseData.ar;
 
-  useEffect(() => {
-    setInterpretation('');
-    setHasRequested(false);
-    setKhameneiText('');
-    setAlmizanText('');
-    setSaanNuzulText('');
+  // Ref to track if sources are being loaded for this verse
+  const loadingSources = React.useRef<string | null>(null);
 
-    // Auto-load Khamenei interpretation if available
-    if (surahNumber && ayahNumber) {
-      const verseRef = `${surahNumber}:${ayahNumber}`;
-      // Load Khamenei text in background
-      fetch(`khamenei-interpretations/${surahNumber}.json`)
+  // Function to load sources for a verse with proper debouncing
+  const loadSources = useCallback(async (verseRef: string, surahNum: number) => {
+    // Prevent duplicate loading for the same verse
+    if (loadingSources.current === verseRef) {
+      return;
+    }
+
+    // Check global cache first
+    if (globalSourceCache.has(verseRef)) {
+      const cached = globalSourceCache.get(verseRef)!;
+      setKhameneiText(cached.khamenei);
+      setSaanNuzulText(cached.saan);
+      return;
+    }
+
+    // Mark as loading
+    loadingSources.current = verseRef;
+
+    // Load both sources in parallel
+    const promises = [];
+
+    // Load Khamenei interpretation
+    promises.push(
+      fetch(`khamenei-interpretations/${surahNum}.json`)
         .then(response => response.ok ? response.json() : null)
         .then(data => {
           if (data && data[verseRef]?.content) {
-            setKhameneiText(data[verseRef].content);
-            if (!autoRequested) {
-              handleRequestInterpretation();
-              setAutoRequested(true);
-            }
+            return data[verseRef].content;
           }
-          else {
-            // No Khamenei interpretation available
-            if (!autoRequested) {
-              setInterpretation('منابع تفسیری برای این آیه در دسترس نیست. لطفاً فیش رهبری یا منابع دیگر اضافه کنید.');
-              setHasRequested(true);
-            }
-          }
+          return '';
         })
-        .catch(error => {
-          console.warn('Could not auto-load Khamenei interpretation:', error);
-        });
+        .catch(() => '')
+    );
 
-      // Load Saan Nuzul in background
+    // Load Saan Nuzul
+    promises.push(
       fetch('saan-nuzul.json')
         .then(response => response.ok ? response.json() : null)
         .then(data => {
           if (data && data[verseRef]?.content) {
-            setSaanNuzulText(data[verseRef].content);
+            return data[verseRef].content;
           }
+          return '';
         })
-        .catch(error => {
-          console.warn('Could not auto-load Saan Nuzul:', error);
-        });
+        .catch(() => '')
+    );
+
+    // Wait for both to complete
+    Promise.all(promises).then(([khameneiContent, saanContent]) => {
+      if (khameneiContent) {
+        setKhameneiText(khameneiContent);
+      }
+      if (saanContent) {
+        setSaanNuzulText(saanContent);
+      }
+
+      // Update global cache
+      globalSourceCache.set(verseRef, {
+        khamenei: khameneiContent,
+        saan: saanContent
+      });
+    }).finally(() => {
+      // Clear loading flag
+      loadingSources.current = null;
+    });
+  }, []);
+
+  useEffect(() => {
+    const verseKey = `${surahNumber}:${ayahNumber}`;
+    
+    // Reset interpretation state when verse changes
+    setInterpretation('');
+    setHasRequested(false);
+    setAlmizanText('');
+    
+    // Load sources with a proper debounce to prevent multiple rapid calls
+    if (surahNumber && ayahNumber) {
+      const timeoutId = setTimeout(() => {
+        loadSources(verseKey, surahNumber);
+      }, 150);
+
+      return () => clearTimeout(timeoutId);
     }
-  }, [verse.id]); // Rerun when verse changes
+  }, [verse.id, loadSources, surahNumber, ayahNumber]);
 
   const handleRequestInterpretation = () => {
     setIsLoading(true);
@@ -142,8 +186,8 @@ export const AIInterpretation: React.FC<AIInterpretationProps> = ({ verse }) => 
             {!hasRequested && (
               <button
                 onClick={handleRequestInterpretation}
-                disabled={true}
-                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm cursor-not-allowed"
+                disabled={isLoading}
+                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
               >
                 دریافت تفسیر
               </button>
@@ -207,7 +251,7 @@ export const AIInterpretation: React.FC<AIInterpretationProps> = ({ verse }) => 
               </div>
             ) : (
               <div className="flex items-center justify-center h-full">
-                <p className="text-slate-600 dark:text-slate-400 text-sm text-center">تفسیر با هوش مصنوعی در حال تولید شدن است. در صورت فراهم بودن فیش رهبری و منابع دیگر، از آن ها برای تفسیر استفاده میشود. امکان خطا و غلط وجود دارد.</p>
+                <p className="text-slate-600 dark:text-slate-400 text-sm text-center">برای دریافت تفسیر هوش مصنوعی، روی دکمه "دریافت تفسیر" کلیک کنید. منابع موجود (فیش رهبری، شان نزول) به صورت خودکار استفاده خواهند شد. امکان خطا و غلط وجود دارد.</p>
               </div>
             )}
             {interpretation && isLoading && (
