@@ -1,17 +1,15 @@
-import { AI_API_URL, DEFAULT_AI_PROMPT } from '../config';
+import { AI_API_URL, DEFAULT_AI_PROMPT, AI_STREAMING } from '../config';
+import OpenAI from 'openai';
 
 let saanNuzulCache: any = null;
 
 // Cache for loaded Saan Nuzul data
-// Load Saan Nuzul from local file
 async function loadSaanNuzul(verseRef: string): Promise<string | undefined> {
   try {
-    // Check cache first
     if (saanNuzulCache) {
       return saanNuzulCache[verseRef]?.content;
     }
 
-    // Load saan-nuzul file
     const response = await fetch('saan-nuzul.json');
     if (!response.ok) {
       console.warn('Could not load Saan Nuzul data');
@@ -19,7 +17,6 @@ async function loadSaanNuzul(verseRef: string): Promise<string | undefined> {
     }
 
     saanNuzulCache = await response.json();
-
     return saanNuzulCache[verseRef]?.content?.trim().replace(/^\s+/, '');
   } catch (error) {
     console.warn('Error loading local Saan Nuzul:', error);
@@ -30,18 +27,15 @@ async function loadSaanNuzul(verseRef: string): Promise<string | undefined> {
 // Cache for loaded surah interpretations
 const surahCache = new Map<string, any>();
 
-// Load Khamenei interpretation from local files
 async function loadKhameneiInterpretation(verseRef: string): Promise<string | undefined> {
   try {
     const [surahNum] = verseRef.split(':');
 
-    // Check cache first
     if (surahCache.has(surahNum)) {
       const surahData = surahCache.get(surahNum);
       return surahData[verseRef]?.content;
     }
 
-    // Load surah file
     const response = await fetch(`khamenei-interpretations/${surahNum}.json`);
     if (!response.ok) {
       console.warn(`Could not load interpretations for surah ${surahNum}`);
@@ -69,13 +63,12 @@ export async function getAIInterpretation(
 ): Promise<string> {
   const prompt = customPrompt || DEFAULT_AI_PROMPT;
 
-  // Try to load Khamenei interpretation from local files if verseRef is provided
+  // Try to load local sources if not provided
   let localKhameneiText = khameneiText;
   if (verseRef && !khameneiText) {
     localKhameneiText = await loadKhameneiInterpretation(verseRef);
   }
 
-  // Try to load Saan Nuzul from local files if verseRef is provided
   let localSaanNuzulText = saanNuzulText;
   if (verseRef && !saanNuzulText) {
     localSaanNuzulText = await loadSaanNuzul(verseRef);
@@ -116,68 +109,57 @@ ${prompt}
 `;
 
   console.log(content);
-  try
-  {
-    const response = await fetch(`${AI_API_URL}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'temp',
-        messages: [
-          {
-            role: 'user',
-            content: content
-          }
-        ],
-        temperature: 0,
-        stream: true
-      })
+
+  try {
+    // Use OpenAI SDK for better handling
+    const openai = new OpenAI({
+      apiKey: "something",
+      baseURL: AI_API_URL,
+      dangerouslyAllowBrowser: true // Only for development
     });
 
-    if (!response.ok) {
-      throw new Error(`API request failed: ${response.status}`);
-    }
-
-    const reader = response.body?.getReader();
-    if (!reader) {
-      throw new Error('Response body is not readable');
-    }
-
-    const decoder = new TextDecoder();
-    let result = '';
-
-    // Read the stream
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-
-      const chunk = decoder.decode(value, { stream: true });
-      const lines = chunk.split('\n');
-
-      for (const line of lines) {
-        if (line.startsWith('data: ')) {
-          const data = line.slice(6);
-          if (data === '[DONE]') continue;
-
-          try {
-            const parsed = JSON.parse(data);
-            const content = parsed.choices?.[0]?.delta?.content;
-            if (content) {
-              result += content;
-              onChunk?.(content);
-            }
-          } catch (e) {
-            console.log(e, line);
-          }
+    if (AI_STREAMING && onChunk) {
+      // Streaming mode - use AI_STREAMING config
+      const stream = await openai.chat.completions.create({
+        model: 'temp',
+        messages: [{
+          role: 'user' as const,
+          content: content
+        }],
+        temperature: 0,
+        stream: true
+      });
+      
+      let result = '';
+      // Handle streaming with OpenAI SDK according to official docs
+      for await (const chunk of stream) {
+        const content = chunk.choices[0]?.delta?.content || '';
+        if (content) {
+          result += content;
+          onChunk(content);
         }
       }
+      return result || 'تفسیری یافت نشد';
+    } else {
+      // Non-streaming mode - use AI_STREAMING config
+      const completion = await openai.chat.completions.create({
+        model: 'temp',
+        messages: [{
+          role: 'user' as const,
+          content: content
+        }],
+        temperature: 0,
+        stream: false
+      });
+      const result = completion.choices[0]?.message?.content || 'تفسیری یافت نشد';
+      
+      // Send entire response as one chunk if callback provided
+      if (onChunk) {
+        onChunk(result);
+      }
+      return result;
     }
-    return result || 'تفسیری یافت نشد';
-  }
-  catch (error)
-  {
+  } catch (error) {
     console.error('Error fetching AI interpretation:', error);
     return 'خطا در دریافت تفسیر هوش مصنوعی';
   }
