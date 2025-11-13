@@ -157,14 +157,20 @@ export const AIInterpretation: React.FC<AIInterpretationProps> = ({ verse }) => 
       !autoTriggered.current &&
       !hasRequested &&
       sourcesLoaded.complete &&
-      (khameneiText || saanNuzulText)
+      khameneiText // Only trigger if Khamenei interpretation is available
     ) {
       autoTriggered.current = true;
       handleRequestInterpretation();
     }
-  }, [khameneiText, saanNuzulText, hasRequested, sourcesLoaded.complete]);
+  }, [khameneiText, hasRequested, sourcesLoaded.complete]);
 
   const handleRequestInterpretation = () => {
+    // Check if Khamenei interpretation is available
+    if (!khameneiText || !khameneiText.trim()) {
+      setInterpretation('متاسفانه منابع کافی برای ارائه تفسیر هوش مصنوعی در دسترس نیست. فیش رهبری برای این آیه موجود نمی‌باشد.');
+      return;
+    }
+
     setIsLoading(true);
     setHasRequested(true);
     setInterpretation('');
@@ -189,6 +195,12 @@ export const AIInterpretation: React.FC<AIInterpretationProps> = ({ verse }) => 
   };
 
   const handleRegenerate = () => {
+    // Check if Khamenei interpretation is available
+    if (!khameneiText || !khameneiText.trim()) {
+      setInterpretation('متاسفانه منابع کافی برای ارائه تفسیر هوش مصنوعی در دسترس نیست. فیش رهبری برای این آیه موجود نمی‌باشد.');
+      return;
+    }
+
     setIsLoading(true);
     setInterpretation('');
 
@@ -221,7 +233,7 @@ export const AIInterpretation: React.FC<AIInterpretationProps> = ({ verse }) => 
             {!hasRequested && (
               <button
                 onClick={handleRequestInterpretation}
-                disabled={isLoading}
+                disabled={isLoading || !khameneiText || !khameneiText.trim()}
                 className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
               >
                 دریافت تفسیر
