@@ -1,13 +1,12 @@
 import fs from 'fs';
 import path from 'path';
 import { JSDOM } from 'jsdom';
-import { Readability } from '@mozilla/readability';
 import axios from 'axios';
 
 // Configuration
 const OUTPUT_FILE = 'public/saan-nuzul.json';
 const SURAH_FOLDER = 'public/saan-nuzul';
-const DELAY_MS = 2000; // Delay between requests to avoid rate limiting
+const DELAY_MS = 3000; // Delay between requests to avoid rate limiting
 const MAX_RETRIES = 10;
 const CONCURRENT_REQUESTS = 20; // Number of parallel requests (lower for Iranian sites)
 
@@ -49,12 +48,11 @@ async function extractSaanNuzulContent(htmlString, verseRef) {
     // Find the nuzul section
     const headers = Array.from(doc.querySelectorAll('.mw-parser-output h2'));
     const nuzulHeader = headers.find(h => {
-      return h.textContent.trim() === "نزول";
+      return h.textContent.includes("نزول");
     });
 
     if (!nuzulHeader) {
       return {
-        verseRef: verseRef,
         content: null,
         found: false
       };
@@ -72,7 +70,6 @@ async function extractSaanNuzulContent(htmlString, verseRef) {
     }
 
     return {
-      verseRef: verseRef,
       content: saanNuzulTexts.join('\n\n'),
       found: saanNuzulTexts.length > 0
     };
@@ -80,7 +77,6 @@ async function extractSaanNuzulContent(htmlString, verseRef) {
   } catch (error) {
     console.error(`Error extracting content for ${verseRef}:`, error.message);
     return {
-      verseRef: verseRef,
       content: "خطا در استخراج محتوا",
       found: false
     };
@@ -107,7 +103,6 @@ async function fetchSaanNuzulData(verseRef, retryCount = 0) {
     const extractedContent = await extractSaanNuzulContent(htmlString, verseRef);
 
     return {
-      verseRef: verseRef,
       url: url,
       ...extractedContent
     };
@@ -120,7 +115,6 @@ async function fetchSaanNuzulData(verseRef, retryCount = 0) {
     }
     console.error(`Failed to fetch Saan Nuzul for ${verseRef} after ${MAX_RETRIES} retries:`, error.message);
     return {
-      verseRef: verseRef,
       url: '',
       content: "خطا در دریافت اطلاعات",
       found: false
@@ -219,7 +213,20 @@ async function createSurahFiles(saanNuzulData) {
   // Create a JSON file for each surah
   for (const [surahNum, surahData] of Object.entries(surahSaanNuzul)) {
     const filePath = path.join(SURAH_FOLDER, `${surahNum}.json`);
-    fs.writeFileSync(filePath, JSON.stringify(surahData, null, 2));
+    
+    // Sort the verses by ayah number to maintain proper order
+    const sortedSurahData = {};
+    Object.keys(surahData)
+      .sort((a, b) => {
+        const [, ayahA] = a.split(':').map(Number);
+        const [, ayahB] = b.split(':').map(Number);
+        return ayahA - ayahB;
+      })
+      .forEach(verseRef => {
+        sortedSurahData[verseRef] = surahData[verseRef];
+      });
+    
+    fs.writeFileSync(filePath, JSON.stringify(sortedSurahData, null, 2));
     console.log(`Created ${filePath} with ${Object.keys(surahData).length} verses`);
   }
 
