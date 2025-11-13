@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tawakkul-cache-v10';
+const CACHE_NAME = 'tawakkul-cache-v11';
 const coreAssets = [
   '/',
   '/index.html',
