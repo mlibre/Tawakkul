@@ -15,6 +15,7 @@ export const AIInterpretation: React.FC<AIInterpretationProps> = ({ verse }) => 
   const [showPromptEditor, setShowPromptEditor] = useState(false);
   const [khameneiText, setKhameneiText] = useState<string>('');
   const [almizanText, setAlmizanText] = useState<string>('');
+  const [saanNuzulText, setSaanNuzulText] = useState<string>('');
   const [hasRequested, setHasRequested] = useState(false);
   const [autoRequested, setAutoRequested] = useState(false);
   const [showSources, setShowSources] = useState(false);
@@ -29,6 +30,7 @@ export const AIInterpretation: React.FC<AIInterpretationProps> = ({ verse }) => 
     setHasRequested(false);
     setKhameneiText('');
     setAlmizanText('');
+    setSaanNuzulText('');
 
     // Auto-load Khamenei interpretation if available
     if (surahNumber && ayahNumber) {
@@ -55,6 +57,18 @@ export const AIInterpretation: React.FC<AIInterpretationProps> = ({ verse }) => 
         .catch(error => {
           console.warn('Could not auto-load Khamenei interpretation:', error);
         });
+
+      // Load Saan Nuzul in background
+      fetch('saan-nuzul.json')
+        .then(response => response.ok ? response.json() : null)
+        .then(data => {
+          if (data && data[verseRef]?.content) {
+            setSaanNuzulText(data[verseRef].content);
+          }
+        })
+        .catch(error => {
+          console.warn('Could not auto-load Saan Nuzul:', error);
+        });
     }
   }, [verse.id]); // Rerun when verse changes
 
@@ -70,8 +84,9 @@ export const AIInterpretation: React.FC<AIInterpretationProps> = ({ verse }) => 
       customPrompt,
       khameneiText || undefined,
       almizanText || undefined,
+      saanNuzulText || undefined,
       verseRef,
-      (chunk) => setInterpretation(prev => prev + chunk)
+      (chunk: string) => setInterpretation(prev => prev + chunk)
     )
       .then(() => {})
       .catch((error) => {
@@ -92,8 +107,9 @@ export const AIInterpretation: React.FC<AIInterpretationProps> = ({ verse }) => 
       customPrompt,
       khameneiText || undefined,
       almizanText || undefined,
+      saanNuzulText || undefined,
       verseRef,
-      (chunk) => setInterpretation(prev => prev + chunk)
+      (chunk: string) => setInterpretation(prev => prev + chunk)
     )
       .then(() => {})
       .catch((error) => {
@@ -238,6 +254,26 @@ export const AIInterpretation: React.FC<AIInterpretationProps> = ({ verse }) => 
                 className="w-full p-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-sm resize-none"
                 rows={3}
                 placeholder="متن تفسیر المیزان را اینجا وارد کنید..."
+              />
+            </div>
+
+            <div className="mt-4">
+              <h3 className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-3">
+                شان نزول <a
+                  href={saanNuzulText ? `https://wiki.ahlolbait.com/آیه_${ayahNumber || 1}_سوره_${surahNumber || 1}` : undefined}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 underline ml-2"
+                >
+                  لینک
+                </a>
+              </h3>
+              <textarea
+                value={saanNuzulText}
+                onChange={(e) => setSaanNuzulText(e.target.value)}
+                className="w-full p-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-sm resize-none"
+                rows={4}
+                placeholder="متن اسباب النزول را اینجا وارد کنید..."
               />
             </div>
           </div>

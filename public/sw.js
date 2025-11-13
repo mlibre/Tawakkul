@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tawakkul-cache-v5';
+const CACHE_NAME = 'tawakkul-cache-v6';
 const coreAssets = [
   '/',
   '/index.html',
@@ -7,7 +7,8 @@ const coreAssets = [
   '/fav.png',
   '/assets/index.js',
   '/assets/index.css',
-  '/quran.json'
+  '/quran.json',
+  '/saan-nuzul.json'
 ];
 
 const backgroundAssets = [

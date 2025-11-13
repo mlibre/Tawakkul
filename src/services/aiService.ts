@@ -1,5 +1,32 @@
 import { AI_API_URL, DEFAULT_AI_PROMPT } from '../config';
 
+let saanNuzulCache: any = null;
+
+// Cache for loaded Saan Nuzul data
+// Load Saan Nuzul from local file
+async function loadSaanNuzul(verseRef: string): Promise<string | undefined> {
+  try {
+    // Check cache first
+    if (saanNuzulCache) {
+      return saanNuzulCache[verseRef]?.content;
+    }
+
+    // Load saan-nuzul file
+    const response = await fetch('saan-nuzul.json');
+    if (!response.ok) {
+      console.warn('Could not load Saan Nuzul data');
+      return undefined;
+    }
+
+    saanNuzulCache = await response.json();
+
+    return saanNuzulCache[verseRef]?.content?.trim().replace(/^\s+/, '');
+  } catch (error) {
+    console.warn('Error loading local Saan Nuzul:', error);
+    return undefined;
+  }
+}
+
 // Cache for loaded surah interpretations
 const surahCache = new Map<string, any>();
 
@@ -36,6 +63,7 @@ export async function getAIInterpretation(
   customPrompt?: string,
   khameneiText?: string,
   almizanText?: string,
+  saanNuzulText?: string,
   verseRef?: string,
   onChunk?: (chunk: string) => void
 ): Promise<string> {
@@ -47,6 +75,12 @@ export async function getAIInterpretation(
     localKhameneiText = await loadKhameneiInterpretation(verseRef);
   }
 
+  // Try to load Saan Nuzul from local files if verseRef is provided
+  let localSaanNuzulText = saanNuzulText;
+  if (verseRef && !saanNuzulText) {
+    localSaanNuzulText = await loadSaanNuzul(verseRef);
+  }
+
   // Build the content with verse and optional texts
   const [surah, ayah] = verseRef ? verseRef.split(':') : [];
 
@@ -55,6 +89,14 @@ export async function getAIInterpretation(
 ${verseText}
 </QURAN-VERSE>
 `;
+
+  if (localSaanNuzulText) {
+    content += `
+<OCCASION-OF-REVELATION>
+${localSaanNuzulText}
+</OCCASION-OF-REVELATION>
+`;
+  }
 
   if (localKhameneiText) {
     content += `
@@ -73,7 +115,7 @@ ${verseText}
 ${prompt}
 `;
 
-  // console.log(content);
+  console.log(content);
   try
   {
     const response = await fetch(`${AI_API_URL}/chat/completions`, {
