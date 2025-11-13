@@ -6,11 +6,13 @@ import axios from 'axios';
 const OUTPUT_FILE = 'public/saan-nuzul.json';
 const DELAY_MS = 3000; // Delay between requests to avoid rate limiting
 const MAX_RETRIES = 3;
-const CONCURRENT_REQUESTS = 20; // Number of parallel requests (lower for Iranian sites)
+const CONCURRENT_REQUESTS = 50; // Number of parallel requests (lower for Iranian sites)
 
 // Surah name mapping for URLs (when website uses different Persian names)
 const SURAH_NAME_URL_MAP = {
-  'سجده': 'سجدة'  // سجده -> سجدة (website uses سجدة with ت)
+  'سجده': 'سجدة',     // سجده -> سجدة (website uses سجدة with ت)
+  'جاثیه': 'جاثیة',   // جاثیه -> جاثية (website uses جاثية with ی)
+  'انشراح': 'شرح'     // انشراح -> شرح (website uses shorter form)
 };
 
 // Load Quran data to get accurate verse counts
