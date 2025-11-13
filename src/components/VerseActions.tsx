@@ -12,10 +12,10 @@ export const VerseActions: React.FC<VerseActionsProps> = ({ verse, onToggleAIInt
 
   // Surah name mapping for URLs (when website uses different Persian names)
   const SURAH_NAME_URL_MAP: Record<string, string> = {
-    'سجده': 'سجدة',     // سجده -> سجدة (website uses سجدة with ت)
-    'جاثیه': 'جاثية',   // جاثیه -> جاثية (website uses جاثية with ی)
-    'انشراح': 'شرح'     // انشراح -> شرح (website uses shorter form)
-  };
+  'سجده': 'سجدة',     // سجده -> سجدة (website uses سجدة with ت)
+  'جاثیه': 'جاثیة',   // جاثیه -> جاثية (website uses جاثية with ی)
+  'انشراح': 'شرح'     // انشراح -> شرح (website uses shorter form)
+};
 
   // Function to get the correct URL version of surah name
   const getSurahNameForUrl = (surahName: string): string => {

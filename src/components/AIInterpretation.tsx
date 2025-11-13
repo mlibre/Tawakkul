@@ -7,7 +7,7 @@ import type { Verse } from '../types';
 // Surah name mapping for URLs (when website uses different Persian names)
 const SURAH_NAME_URL_MAP: Record<string, string> = {
   'سجده': 'سجدة',     // سجده -> سجدة (website uses سجدة with ت)
-  'جاثیه': 'جاثية',   // جاثیه -> جاثية (website uses جاثية with ی)
+  'جاثیه': 'جاثیة',   // جاثیه -> جاثية (website uses جاثية with ی)
   'انشراح': 'شرح'     // انشراح -> شرح (website uses shorter form)
 };
 
