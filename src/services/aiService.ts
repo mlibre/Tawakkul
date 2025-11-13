@@ -169,7 +169,7 @@ ${prompt}
               onChunk?.(content);
             }
           } catch (e) {
-            // Ignore parsing errors for incomplete chunks
+            console.log(e);
           }
         }
       }

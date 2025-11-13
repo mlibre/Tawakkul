@@ -39,8 +39,10 @@ export const AIInterpretation: React.FC<AIInterpretationProps> = ({ verse }) => 
   const ayahNumber = ayah;
   const verseText = verseData.ar;
 
-  // Ref to track if sources are being loaded for this verse
+  // Refs to track state and prevent loops
   const loadingSources = React.useRef<string | null>(null);
+  const sourcesLoaded = React.useRef<boolean>(false);
+  const autoTriggered = React.useRef<boolean>(false);
 
   // Function to load sources for a verse with proper debouncing
   const loadSources = useCallback(async (verseRef: string, surahNum: number) => {
@@ -54,6 +56,9 @@ export const AIInterpretation: React.FC<AIInterpretationProps> = ({ verse }) => 
       const cached = globalSourceCache.get(verseRef)!;
       setKhameneiText(cached.khamenei);
       setSaanNuzulText(cached.saan);
+      
+      // Mark as sources loaded for cache
+      sourcesLoaded.current = true;
       return;
     }
 
@@ -98,6 +103,9 @@ export const AIInterpretation: React.FC<AIInterpretationProps> = ({ verse }) => 
         setSaanNuzulText(saanContent);
       }
 
+      // Mark that sources have been loaded for this verse
+      sourcesLoaded.current = true;
+
       // Update global cache
       globalSourceCache.set(verseRef, {
         khamenei: khameneiContent,
@@ -117,6 +125,10 @@ export const AIInterpretation: React.FC<AIInterpretationProps> = ({ verse }) => 
     setHasRequested(false);
     setAlmizanText('');
     
+    // Reset tracking for new verse
+    sourcesLoaded.current = false;
+    autoTriggered.current = false;
+    
     // Load sources with a proper debounce to prevent multiple rapid calls
     if (surahNumber && ayahNumber) {
       const timeoutId = setTimeout(() => {
@@ -126,6 +138,24 @@ export const AIInterpretation: React.FC<AIInterpretationProps> = ({ verse }) => 
       return () => clearTimeout(timeoutId);
     }
   }, [verse.id, loadSources, surahNumber, ayahNumber]);
+
+  // Auto-trigger AI only once when sources are first loaded
+  useEffect(() => {
+    // Only trigger if:
+    // 1. We haven't auto-triggered yet
+    // 2. We haven't manually requested yet
+    // 3. Sources are loaded for the first time
+    // 4. We actually have some source content
+    
+    if (!autoTriggered.current &&
+        !hasRequested &&
+        sourcesLoaded.current &&
+        (khameneiText || saanNuzulText)) {
+      
+      autoTriggered.current = true;
+      handleRequestInterpretation();
+    }
+  }, [khameneiText, saanNuzulText, hasRequested]);
 
   const handleRequestInterpretation = () => {
     setIsLoading(true);
