@@ -1,3 +1,14 @@
+// Surah name mapping for URLs (when website uses different Persian names)
+const SURAH_NAME_URL_MAP: Record<string, string> = {
+  'سجده': 'سجدة',     // سجده -> سجدة (website uses سجدة with ت)
+  'جاثیه': 'جاثية',   // جاثیه -> جاثية (website uses جاثية with ی)
+  'انشراح': 'شرح'     // انشراح -> شرح (website uses shorter form)
+};
+// Function to get the correct URL version of surah name
+function getSurahNameForUrl(surahName: string): string {
+  return SURAH_NAME_URL_MAP[surahName] || surahName;
+}
+
 import React, { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { getAIInterpretation } from '../services/aiService';
@@ -260,7 +271,7 @@ export const AIInterpretation: React.FC<AIInterpretationProps> = ({ verse }) => 
             <div className="mt-4">
               <h3 className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-3">
                 شان نزول <a
-                  href={saanNuzulText ? `https://wiki.ahlolbait.com/آیه_${ayahNumber || 1}_سوره_${surahNumber || 1}` : undefined}
+                  href={saanNuzulText ? `https://wiki.ahlolbait.com/آیه_${ayahNumber || 1}_سوره_${getSurahNameForUrl(surah.farsi)}` : undefined}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 underline ml-2"

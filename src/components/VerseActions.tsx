@@ -9,12 +9,23 @@ interface VerseActionsProps {
 export const VerseActions: React.FC<VerseActionsProps> = ({ verse, onToggleAIInterpretation }) => {
   const surahNumber = verse.surah.number;
   const ayahNumber = verse.ayah;
-  const surahTitlePersian = verse.surah.farsi.replace(/ /g, '_');
+
+  // Surah name mapping for URLs (when website uses different Persian names)
+  const SURAH_NAME_URL_MAP: Record<string, string> = {
+    'سجده': 'سجدة',     // سجده -> سجدة (website uses سجدة with ت)
+    'جاثیه': 'جاثية',   // جاثیه -> جاثية (website uses جاثية with ی)
+    'انشراح': 'شرح'     // انشراح -> شرح (website uses shorter form)
+  };
+
+  // Function to get the correct URL version of surah name
+  const getSurahNameForUrl = (surahName: string): string => {
+    return SURAH_NAME_URL_MAP[surahName] || surahName;
+  };
 
   const khameneiUrl = `https://farsi.khamenei.ir/newspart-index?sid=${surahNumber}&npt=7&aya=${ayahNumber}`;
   const tafsirNoorUrl = `https://quran.makarem.ir/fa/interpretation?sura=${surahNumber}&verse=${ayahNumber}`;
   const alMizanUrl = `https://quran.inoor.ir/fa/ayah/${surahNumber}/${ayahNumber}/commentary?book=121`;
-  const shaanNozulUrl = `https://wiki.ahlolbait.com/آیه_${ayahNumber}_سوره_${surahTitlePersian}`;
+  const shaanNozulUrl = `https://wiki.ahlolbait.com/آیه_${ayahNumber}_سوره_${getSurahNameForUrl(verse.surah.farsi)}`;
 
   return (
     <div className="mt-2 flex justify-end gap-2 items-center">
