@@ -169,7 +169,7 @@ ${prompt}
               onChunk?.(content);
             }
           } catch (e) {
-            console.log(e);
+            console.log(e, line);
           }
         }
       }

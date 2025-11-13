@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tawakkul-cache-v6';
+const CACHE_NAME = 'tawakkul-cache-v7';
 const coreAssets = [
   '/',
   '/index.html',
@@ -79,33 +79,47 @@ self.addEventListener('activate', (event) => {
 });
 
 // Fetch event: serve from cache, fallback to network, and cache new requests
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request)
-      .then((cachedResponse) => {
-        // If the response is in the cache, return it
-        if (cachedResponse) {
-          return cachedResponse;
-        }
+// self.addEventListener('fetch', (event) => {
+//   const url = new URL(event.request.url);
+  
+//   // Skip caching for AI API requests and other external APIs
+//   if (url.hostname.includes('unified-ai-router') ||
+//       url.hostname.includes('openai') ||
+//       url.pathname.includes('/chat/completions') ||
+//       url.pathname.includes('/chat/completion') ||
+//       url.hostname.includes('ai.') ||
+//       url.protocol === 'https:' && !url.hostname.includes(window.location.hostname)) {
+//     // Don't cache AI requests - let them go directly to network
+//     event.respondWith(fetch(event.request));
+//     return;
+//   }
 
-        // If the response is not in the cache, fetch it from the network
-        return fetch(event.request).then((networkResponse) => {
-          // Clone the response because it's a stream and can only be consumed once
-          const responseToCache = networkResponse.clone();
+//   event.respondWith(
+//     caches.match(event.request)
+//       .then((cachedResponse) => {
+//         // If the response is in the cache, return it
+//         if (cachedResponse) {
+//           return cachedResponse;
+//         }
 
-          caches.open(CACHE_NAME)
-            .then((cache) => {
-              // Cache the new response for future use
-              cache.put(event.request, responseToCache);
-            });
+//         // If the response is not in the cache, fetch it from the network
+//         return fetch(event.request).then((networkResponse) => {
+//           // Clone the response because it's a stream and can only be consumed once
+//           const responseToCache = networkResponse.clone();
 
-          // Return the network response
-          return networkResponse;
-        });
-      }).catch((error) => {
-        // Handle fetch errors, e.g., when the network is unavailable
-        console.error('Service worker fetch error:', error);
-        // You could return a fallback offline page here if you have one
-      })
-  );
-});
+//           caches.open(CACHE_NAME)
+//             .then((cache) => {
+//               // Cache the new response for future use
+//               cache.put(event.request, responseToCache);
+//             });
+
+//           // Return the network response
+//           return networkResponse;
+//         });
+//       }).catch((error) => {
+//         // Handle fetch errors, e.g., when the network is unavailable
+//         console.error('Service worker fetch error:', error);
+//         // You could return a fallback offline page here if you have one
+//       })
+//   );
+// });
