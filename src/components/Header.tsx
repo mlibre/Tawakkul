@@ -124,7 +124,7 @@ export const Header: React.FC<HeaderProps> = ({ pageData, theme, setTheme, onPag
                       setIsPageInputVisible(false);
                     }
                   }}
-                  className="w-8 px-0 py-0 text-xs border border-gray-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-purple-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  className="w-8 px-0 py-0 text-xs text-center border border-gray-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-purple-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   placeholder="1"
                   autoFocus
                 />
