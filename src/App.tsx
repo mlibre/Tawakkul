@@ -110,7 +110,7 @@ function App(): React.ReactElement {
   return (
     <>
       <div className="min-h-screen bg-gradient-to-br from-sky-100 via-purple-100 to-pink-100 dark:from-slate-900 dark:via-purple-950 dark:to-slate-800 text-slate-800 dark:text-slate-200 transition-colors duration-500 font-persian">
-        <div className="container mx-auto max-w-[61rem] p-4 sm:p-6">
+        <div className="container mx-auto py-4 sm:max-w-[61rem] sm:p-6">
           <div className="flex flex-col md:flex-row gap-6">
             <div className="flex-1">
               <Header
