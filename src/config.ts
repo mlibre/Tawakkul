@@ -6,10 +6,5 @@ export const DEFAULT_AI_PROMPT = `
 
 ## AI Analysis Guidelines
 
-Analyze the provided Quran verse and its Islamic interpretations:
-
-* Provide a detailed, comprehensive, yet concise explanation.
-* Rely ONLY on the content inside the markdown sections above (Quran Verse, Occasion of Revelation, Interpretations).
-* Respond in Persian, using an active and direct style.
-* Be truthful and base your response solely on the provided content.
+Analyze the provided Quran verse and its Islamic interpretations. Provide a detailed, comprehensive, yet concise explanation. Rely ONLY on the content inside the markdown sections above (Quran Verse, Occasion of Revelation, Interpretations). Respond in Persian, using an active and direct style. Be truthful and base your response solely on the provided content.
 `;
