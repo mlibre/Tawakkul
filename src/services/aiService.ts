@@ -1,57 +1,6 @@
 import { AI_API_URL, DEFAULT_AI_PROMPT, AI_STREAMING } from '../config';
 import OpenAI from 'openai';
 
-let saanNuzulCache: any = null;
-
-// Cache for loaded Saan Nuzul data
-async function loadSaanNuzul(verseRef: string): Promise<string | undefined> {
-  try {
-    if (saanNuzulCache) {
-      return saanNuzulCache[verseRef]?.content;
-    }
-
-    const response = await fetch('saan-nuzul.json');
-    if (!response.ok) {
-      console.warn('Could not load Saan Nuzul data');
-      return undefined;
-    }
-
-    saanNuzulCache = await response.json();
-    return saanNuzulCache[verseRef]?.content?.trim().replace(/^\s+/, '');
-  } catch (error) {
-    console.warn('Error loading local Saan Nuzul:', error);
-    return undefined;
-  }
-}
-
-// Cache for loaded surah interpretations
-const surahCache = new Map<string, any>();
-
-async function loadKhameneiInterpretation(verseRef: string): Promise<string | undefined> {
-  try {
-    const [surahNum] = verseRef.split(':');
-
-    if (surahCache.has(surahNum)) {
-      const surahData = surahCache.get(surahNum);
-      return surahData[verseRef]?.content;
-    }
-
-    const response = await fetch(`khamenei-interpretations/${surahNum}.json`);
-    if (!response.ok) {
-      console.warn(`Could not load interpretations for surah ${surahNum}`);
-      return undefined;
-    }
-
-    const surahData = await response.json();
-    surahCache.set(surahNum, surahData);
-
-    return surahData[verseRef]?.content?.trim().replace(/^\s+/, '');
-  } catch (error) {
-    console.warn('Error loading local Khamenei interpretation:', error);
-    return undefined;
-  }
-}
-
 export async function getAIInterpretation(
   verseText: string,
   customPrompt?: string,
@@ -63,16 +12,9 @@ export async function getAIInterpretation(
 ): Promise<string> {
   const prompt = customPrompt || DEFAULT_AI_PROMPT;
 
-  // Try to load local sources if not provided
-  let localKhameneiText = khameneiText;
-  if (verseRef && !khameneiText) {
-    localKhameneiText = await loadKhameneiInterpretation(verseRef);
-  }
-
-  let localSaanNuzulText = saanNuzulText;
-  if (verseRef && !saanNuzulText) {
-    localSaanNuzulText = await loadSaanNuzul(verseRef);
-  }
+  // Use the provided texts directly - no need for duplicate fetching
+  const localKhameneiText = khameneiText || '';
+  const localSaanNuzulText = saanNuzulText || '';
 
   // Build the content with verse and optional texts
   const [surah, ayah] = verseRef ? verseRef.split(':') : [];
