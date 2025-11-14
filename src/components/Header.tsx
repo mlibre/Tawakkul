@@ -100,8 +100,8 @@ export const Header: React.FC<HeaderProps> = ({ pageData, theme, setTheme, onPag
             )}
           </div>
 
-          {/* Page Input Toggle - Fixed width to prevent layout shift */}
-          <div className="w-20 flex justify-center">
+          {/* Page Input Toggle - Fixed size to prevent layout shift */}
+          <div className="w-20 flex items-center justify-center min-h-[1.25rem]">
             {!isPageInputVisible ? (
               <button
                 onClick={() => setIsPageInputVisible(true)}
@@ -110,8 +110,8 @@ export const Header: React.FC<HeaderProps> = ({ pageData, theme, setTheme, onPag
                 صفحه: {currentPage}
               </button>
             ) : (
-              <div className="flex items-center gap-1">
-                <label htmlFor="page-input" className="text-xs">صفحه:</label>
+              <div className="flex items-center gap-0">
+                <span className="text-xs text-slate-600 dark:text-slate-400">صفحه:</span>
                 <input
                   id="page-input"
                   type="number"
@@ -124,7 +124,7 @@ export const Header: React.FC<HeaderProps> = ({ pageData, theme, setTheme, onPag
                       setIsPageInputVisible(false);
                     }
                   }}
-                  className="w-14 px-1 py-0.5 text-xs border border-gray-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-purple-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  className="w-8 px-0 py-0 text-xs border border-gray-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-purple-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   placeholder="1"
                   autoFocus
                 />
