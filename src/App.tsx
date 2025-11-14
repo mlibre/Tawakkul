@@ -58,13 +58,21 @@ function App(): React.ReactElement {
 
   const togglePageRead = useCallback(() => {
     const newReadPages = new Set(readPagesSet);
+    const newReadAyahs = new Set(readAyahsSet);
+    
     if (newReadPages.has(currentPage)) {
       newReadPages.delete(currentPage);
     } else {
       newReadPages.add(currentPage);
+      // Mark all ayahs in the current page as read
+      if (pageData) {
+        const pageAyahIds = pageData.verses.map(v => v.id);
+        pageAyahIds.forEach(id => newReadAyahs.add(id));
+      }
     }
     setReadPages(Array.from(newReadPages));
-  }, [currentPage, readPagesSet, setReadPages]);
+    setReadAyahs(Array.from(newReadAyahs));
+  }, [currentPage, readPagesSet, setReadPages, pageData, readAyahsSet, setReadAyahs]);
 
   const toggleAyahRead = useCallback((ayahId: number) => {
     const newReadAyahs = new Set(readAyahsSet);
@@ -117,6 +125,7 @@ function App(): React.ReactElement {
                 pageData={pageData}
                 theme={theme}
                 setTheme={setTheme}
+                onPageChange={handlePageChange}
               />
               <main>
                 {pageData ? (

@@ -104,3 +104,35 @@ export function getPage(pageNumber: number): PageData | null {
     }
   };
 }
+
+export function getAllSurahs(): Array<{ number: number; farsi: string; arabic: string; firstPage: number }> {
+  if (!quranData) {
+    console.warn("Quran data not initialized. Call initQuranData() first.");
+    return [];
+  }
+
+  const surahs = new Map<number, { number: number; farsi: string; arabic: string; firstPage: number }>();
+  quranData.forEach((verse: Verse) => {
+    const surah = verse.surah;
+    if (!surahs.has(surah.number)) {
+      let firstPageNumber = 1;
+      // Find the actual first page for this surah
+      for (let page = 1; page <= TOTAL_PAGES; page++) {
+        const pageMeta = getPageMeta(page as any);
+        if (quranData!.some(v => v.id >= pageMeta.firstAyahId && v.id <= pageMeta.lastAyahId && v.surah.number === surah.number)) {
+          firstPageNumber = page;
+          break;
+        }
+      }
+      
+      surahs.set(surah.number, {
+        number: surah.number,
+        farsi: surah.farsi,
+        arabic: surah.arabic,
+        firstPage: firstPageNumber
+      });
+    }
+  });
+
+  return Array.from(surahs.values()).sort((a, b) => a.number - b.number);
+}
